@@ -10,8 +10,8 @@ This functionality of this plugin could easily be expanded to use more of Twitte
 
 ##Requirements
 
-*EE 2.0
-*Twitter Account
+* EE 2.0
+* Twitter Account
 
 ##Installation
 1. Add-ons -> Modules -> TGL_Twitter -> Install
