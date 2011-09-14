@@ -10,6 +10,7 @@ require_once PATH_THIRD.'tgl_twitter/classes/twitteroauth.php';
  * relation to cURL may be incorrect now that we are using oAuth.  Not really sure if oAuth also uses curl..
  * 
  * @package default
+ * @author Derek Jones
  * @author Bryant Hughes
  */
 
@@ -44,8 +45,6 @@ class Tgl_twitter
 		$this->screen_name	= $this->EE->TMPL->fetch_param('screen_name');
 		$create_links		= $this->EE->TMPL->fetch_param('create_links', '');
 				
-		//create_links="user_mentions|hashtags|urls"
-		
 		$create_links = explode('|', $create_links);
 		
 		foreach ($create_links as $name)
@@ -621,20 +620,24 @@ class Tgl_twitter
 	{		
 		$data = '';
 		
+		//this is where we have modified the plugin to fetch our data via oauth
+
 		$this->EE->load->model('tgl_twitter_model');
 		$settings = $this->EE->tgl_twitter_model->get_settings();
 		
 		// Read in our saved access token/secret
 		$access_token = $settings['access_token'];
 		$access_token_secret = $settings['access_token_secret'];
-		
+
 		// Create our twitter API object
 		$oauth = new TwitterOAuth($settings['consumer_key'], $settings['consumer_secret'], $access_token, $access_token_secret);
 		$oauth->format = 'xml';
-		
+				
 		$params = array('include_rts'=>'true', 'include_entities'=>'true', 'screen_name' => $this->screen_name);
 		$data = $oauth->get("statuses/user_timeline", $params);
-		
+
+		//print_r($data);
+
 		return $data;
 	}
 

@@ -37,7 +37,7 @@
 	}
 	
 	if(isset($settings['consumer_key'], $settings['consumer_secret']) && !empty($settings['consumer_key']) && !empty($settings['consumer_key']) && ! isset($settings['pin'])){
-		$this->table->add_row("If you are submitting your Pin, do not click here. (Click Update, instead)","<p><a id='generate_request_token' href='".BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=tgl_twitter'.AMP."method=register_with_twitter'>Generate new Request Token</a></p>");
+		$this->table->add_row("If you are submitting your PIN number, do not click \"Generate New Request Token\" (Click Update, instead)","<p><a id='generate_request_token' href='".BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=tgl_twitter'.AMP."method=register_with_twitter'>Generate new Request Token</a></p>");
 	}
 	
 	//access tokens

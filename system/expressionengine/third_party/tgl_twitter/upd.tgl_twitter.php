@@ -55,9 +55,11 @@ class Tgl_twitter_upd
 	{
 		$this->EE->load->dbforge();
 		
-		$this->EE->db->query("DELETE FROM exp_modules WHERE module_name = 'TGL Twitter'");
+		$this->EE->db->query("DELETE FROM exp_modules WHERE module_name = 'Tgl_Twitter'");
 		
 		$this->EE->dbforge->drop_table('tgl_twitter_settings');
+
+		return TRUE;
 	}
 }
 
