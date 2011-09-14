@@ -26,3 +26,7 @@ This functionality of this plugin could easily be expanded to use more of Twitte
 
 Please see: http://expressionengine.com/downloads/details/twitter_timeline/
 
+## Known Issues
+
+Please take note that on some API calls, such as user timeline,  if the API does not detect a valid oAuth token it will just default to the unauthenticated API conditions.  An example of this is if you install the module, then add in your template tags without authenticating first, data will still be shown.  However, this data will be rate limited to 150 and is returned based on unauthenticated API conditions.
+
