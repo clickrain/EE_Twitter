@@ -26,7 +26,7 @@ This functionality of this plugin could easily be expanded to use more of Twitte
 
 Please see: http://expressionengine.com/downloads/details/twitter_timeline/
 
-__keep in mind that all tags use {exp:tgl_twitter} instead of {exp:twitter_timeline}__
+**keep in mind that all tags use {exp:tgl_twitter} instead of {exp:twitter_timeline}**
 
 ## Known Issues
 
