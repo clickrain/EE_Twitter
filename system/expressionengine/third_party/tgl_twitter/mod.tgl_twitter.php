@@ -130,7 +130,8 @@ class Tgl_twitter
 				
 				foreach ($val['entities'] as $type => $found)
 				{
-					if ( ! $this->entities[$type])
+
+					if ( ! isset($this->entities[$type]) ) 
 					{
 						continue;
 					}
