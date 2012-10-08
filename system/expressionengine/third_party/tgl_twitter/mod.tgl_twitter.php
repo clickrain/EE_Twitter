@@ -144,7 +144,8 @@ class Tgl_twitter
 										$replace[]	= "<a title='{$info['name']}' href='http://twitter.com/{$info['screen_name']}'>@{$info['screen_name']}</a>";
 								break;
 							case 'hashtags':		$find[]		= '#'.$info['text'];
-													$replace[]	= "<a title='Search for {$info['text']}' href='http://twitter.com/search?q=%23{$info['text']}'>#{$info['text']}</a>";
+													// Because EE's xss_clean replaces %23 with #, we need to use %2523; EE changes %25 into %, so we get %23.
+													$replace[]	= "<a title='Search for {$info['text']}' href='http://twitter.com/search?q=%2523{$info['text']}'>#{$info['text']}</a>";
 								break;
 							case 'urls':			$find[]		= $info['url'];
 													$replace[]	= "<a title='{$info['expanded_url']}' href='{$info['url']}'>{$info['url']}</a>";
