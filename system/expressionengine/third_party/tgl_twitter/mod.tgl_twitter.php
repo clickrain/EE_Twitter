@@ -148,7 +148,9 @@ class Tgl_twitter
 													$replace[]	= "<a title='Search for {$info['text']}' href='http://twitter.com/search?q=%2523{$info['text']}'>#{$info['text']}</a>";
 								break;
 							case 'urls':			$find[]		= $info['url'];
-													$replace[]	= "<a title='{$info['expanded_url']}' href='{$info['url']}'>{$info['url']}</a>";
+								$displayurl = $info['url'];
+								if (isset($info['display_url'])) { $displayurl = $info['display_url']; }
+													$replace[]	= "<a title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
 						}
 					}
 				}
