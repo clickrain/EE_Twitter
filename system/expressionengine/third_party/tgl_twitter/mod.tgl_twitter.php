@@ -29,6 +29,17 @@ class Tgl_twitter
 	var $entities		= array('user_mentions' => FALSE, 'urls' => FALSE, 'hashtags' => FALSE);
 	var $use_stale;
 	
+
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 */
+	function Tgl_twitter() {
+		// Adding an old-style constructor allows use on older installs of EE2.
+		Tgl_twitter::__construct();
+	}
+
 	/**
 	 * Constructor
 	 *
