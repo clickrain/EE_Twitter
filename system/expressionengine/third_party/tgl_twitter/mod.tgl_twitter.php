@@ -48,7 +48,10 @@ class Tgl_twitter
 	function __construct()
 	{
 		$this->EE =& get_instance();
+	}
 
+	public function user()
+	{
 		// Fetch parameters
 		$this->refresh		= $this->EE->TMPL->fetch_param('twitter_refresh', $this->refresh);
 		$this->limit		= $this->EE->TMPL->fetch_param('limit', $this->limit);
@@ -121,6 +124,8 @@ class Tgl_twitter
 				$created_at[$matches['0'][$i]] = $this->EE->localize->fetch_date_params($matches['3'][$i]);
 			}
 		}
+
+		$return_data = '';
 
 		// Loop through all statuses and do our template replacements
 		foreach ($statuses as $val)
@@ -254,7 +259,7 @@ class Tgl_twitter
 
 				if ($var_key == 'status_relative_date')
 				{
-					$human_time	= $this->_parse_twitter_date($statuses[$key]['created_at']);
+					$human_time	= $this->_parse_twitter_date($val['created_at']);
 
 					$date		= $this->EE->localize->set_server_time($this->EE->localize->convert_human_date_to_gmt($human_time));
 					$tagdata	= $this->EE->TMPL->swap_var_single($var_key, $this->EE->localize->format_timespan($this->EE->localize->now - $date), $tagdata);
@@ -277,8 +282,10 @@ class Tgl_twitter
 				}
 			}
 
-			$this->return_data .= $tagdata;
+			$return_data .= $tagdata;
 		}
+
+		return $return_data;
 	}
 
 	// --------------------------------------------------------------------
