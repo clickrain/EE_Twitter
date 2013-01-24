@@ -268,6 +268,26 @@ class Twitter
 					$tagdata	= $this->EE->TMPL->swap_var_single($var_key, $this->EE->localize->format_timespan($this->EE->localize->now - $date), $tagdata);
 				}
 
+				if ($var_key == 'permalink')
+				{
+					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_permalink($val), $tagdata);
+				}
+
+				if ($var_key == 'reply_intent')
+				{
+					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_reply_intent($val), $tagdata);
+				}
+
+				if ($var_key == 'retweet_intent')
+				{
+					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_retweet_intent($val), $tagdata);
+				}
+
+				if ($var_key == 'favorite_intent')
+				{
+					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_favorite_intent($val), $tagdata);
+				}
+
 				if ($var_key == 'relative_date')
 				{
 					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_relative_date($val), $tagdata);
@@ -594,6 +614,22 @@ class Twitter
 
 		return "{$parts[5]}-{$mm}-{$parts[2]} {$parts[3]}";
 
+	}
+
+	function _build_permalink($status) {
+		return 'https://twitter.com/' . $status['user']['screen_name'] . '/statuses/' . $status['id_str'];
+	}
+
+	function _build_reply_intent($status) {
+		return 'https://twitter.com/intent/tweet?in_reply_to=' . $status['id_str'];
+	}
+
+	function _build_retweet_intent($status) {
+		return 'https://twitter.com/intent/retweet?tweet_id=' . $status['id_str'];
+	}
+
+	function _build_favorite_intent($status) {
+		return 'https://twitter.com/intent/favorite?tweet_id=' . $status['id_str'];
 	}
 
 	function _build_relative_date($status, $now = NULL) {
