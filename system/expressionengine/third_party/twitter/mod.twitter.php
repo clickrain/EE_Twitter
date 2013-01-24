@@ -115,8 +115,12 @@ class Twitter
 		{
 
 			// If this is a retweet, let's use that data instead
+			$retweeted = FALSE;
 			if (isset($val['retweeted_status'])) {
+				$retweeted = TRUE;
+				$retweeter = $val['user']['name'];
 				$val = $val['retweeted_status'];
+				$val['retweeter'] = $retweeter;
 			}
 
 			$tagdata = $this->EE->TMPL->tagdata;
@@ -177,6 +181,7 @@ class Twitter
 			$tagdata = $this->EE->functions->prep_conditionals($tagdata, $cond['user']);
 
 			unset($cond['user']);
+			$cond['retweeted'] = $retweeted;
 			$tagdata = $this->EE->functions->prep_conditionals($tagdata, $cond);
 
 

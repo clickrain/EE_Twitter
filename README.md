@@ -80,6 +80,10 @@ The profile image of the person who created the tweet, using the HTTP protocol.
 
 The profile image of the person who created the tweet, using the HTTPS protocol.
 
+**Retweets**: `{if retweeted}`, `{retweeter}`
+
+If the tweet is a retweet, the _original_ tweet will be shown. Use `{if retweet}` to determine if the tweet being shown is a retweet. `{retweeter}` will then include the name of the person that retweeted the tweet.
+
 ## Known Issues
 
 Please take note that on some API calls, such as user timeline,  if the API does not detect a valid oAuth token it will just default to the unauthenticated API conditions.  An example of this is if you install the module, then add in your template tags without authenticating first, data will still be shown.  However, this data will be rate limited to 150 and is returned based on unauthenticated API conditions.
