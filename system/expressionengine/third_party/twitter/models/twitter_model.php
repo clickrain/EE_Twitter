@@ -1,13 +1,13 @@
 <?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Model that handles DB communication for the TGL Twitter Module
+ * Model that handles DB communication for the Twitter Module
  *
  * @author Bryant Hughes
  * @version 0.1
  **/
 
-class Tgl_twitter_model extends CI_Model {
+class Twitter_model extends CI_Model {
 
 	public $site_id;
 
@@ -22,11 +22,11 @@ class Tgl_twitter_model extends CI_Model {
 		$this->site_id = $this->_ee->config->item('site_id');
 
 		//prep-cache
-		if (! isset($this->_ee->session->cache['tgl_twitter']))
+		if (! isset($this->_ee->session->cache['twitter']))
 		{
-			$this->_ee->session->cache['tgl_twitter'] = array();
+			$this->_ee->session->cache['twitter'] = array();
 		}
-		$this->cache =& $this->_ee->session->cache['tgl_twitter'];
+		$this->cache =& $this->_ee->session->cache['twitter'];
 
   }
 
@@ -40,7 +40,7 @@ class Tgl_twitter_model extends CI_Model {
 	{
 
 		$query = $this->db->query("SELECT *
-    FROM exp_tgl_twitter_settings
+    FROM exp_twitter_settings
     WHERE site_id = ". $this->site_id);
 
     $settings = false;
@@ -72,7 +72,7 @@ class Tgl_twitter_model extends CI_Model {
 		$success = true;
 
 		// get current settings out of DB
-		$sql = "SELECT * FROM exp_tgl_twitter_settings WHERE site_id = $this->site_id";
+		$sql = "SELECT * FROM exp_twitter_settings WHERE site_id = $this->site_id";
 		$settings_result = $this->db->query($sql);
 
 		$old_settings = $settings_result->result_array();
@@ -94,7 +94,7 @@ class Tgl_twitter_model extends CI_Model {
 			{
         // $key = $DB->escape_str($key);
         if(!$this->db->query($this->db->insert_string(
-         "exp_tgl_twitter_settings",
+         "exp_twitter_settings",
          array(
            'var'       => $key,
            'var_value' => $value,
@@ -125,17 +125,17 @@ class Tgl_twitter_model extends CI_Model {
 
 		$this->db->where('site_id', $this->site_id);
 		$this->db->where('var', 'request_token');
-		if( ! $this->db->delete('exp_tgl_twitter_settings')){
+		if( ! $this->db->delete('exp_twitter_settings')){
 			$success = false;
 		}
 
 		$this->db->where('site_id', $this->site_id);
 		$this->db->where('var', 'request_token_secret');
-		if( ! $this->db->delete('exp_tgl_twitter_settings')){
+		if( ! $this->db->delete('exp_twitter_settings')){
 			$success = false;
 		}
 
-		if(!$this->db->query($this->db->insert_string("exp_tgl_twitter_settings",
+		if(!$this->db->query($this->db->insert_string("exp_twitter_settings",
      array(
        'var'       => 'request_token',
        'var_value' => $request_token,
@@ -145,7 +145,7 @@ class Tgl_twitter_model extends CI_Model {
       $success = false;
     }
 
-		if(!$this->db->query($this->db->insert_string("exp_tgl_twitter_settings",
+		if(!$this->db->query($this->db->insert_string("exp_twitter_settings",
      array(
        'var'       => 'request_token_secret',
        'var_value' => $request_token_secret,
@@ -174,17 +174,17 @@ class Tgl_twitter_model extends CI_Model {
 
 		$this->db->where('site_id', $this->site_id);
 		$this->db->where('var', 'access_token');
-		if( ! $this->db->delete('exp_tgl_twitter_settings')){
+		if( ! $this->db->delete('exp_twitter_settings')){
 			$success = false;
 		}
 
 		$this->db->where('site_id', $this->site_id);
 		$this->db->where('var', 'access_token_secret');
-		if( ! $this->db->delete('exp_tgl_twitter_settings')){
+		if( ! $this->db->delete('exp_twitter_settings')){
 			$success = false;
 		}
 
-		if(!$this->db->query($this->db->insert_string("exp_tgl_twitter_settings",
+		if(!$this->db->query($this->db->insert_string("exp_twitter_settings",
      array(
        'var'       => 'access_token',
        'var_value' => $access_token,
@@ -194,7 +194,7 @@ class Tgl_twitter_model extends CI_Model {
       $success = false;
     }
 
-		if(!$this->db->query($this->db->insert_string("exp_tgl_twitter_settings",
+		if(!$this->db->query($this->db->insert_string("exp_twitter_settings",
      array(
        'var'       => 'access_token_secret',
        'var_value' => $access_token_secret,
@@ -219,7 +219,7 @@ class Tgl_twitter_model extends CI_Model {
 
 		// clense current settings out of DB : we add the WHERE site_id = $site_id, because the only setting we want to save is the module_id
 		// setting, which is set to site_id 0 -- because its not site specific
-		$sql = "DELETE FROM exp_tgl_twitter_settings WHERE site_id = $this->site_id";
+		$sql = "DELETE FROM exp_twitter_settings WHERE site_id = $this->site_id";
 		return $this->db->query($sql);
 
 	}
@@ -235,14 +235,7 @@ class Tgl_twitter_model extends CI_Model {
 	{
 		$this->db->where('site_id', $this->site_id);
 		$this->db->where('var', $val);
-		return $this->db->delete('exp_tgl_twitter_settings');
+		return $this->db->delete('exp_twitter_settings');
 	}
 
 }
-
-
-
-
-
-
-

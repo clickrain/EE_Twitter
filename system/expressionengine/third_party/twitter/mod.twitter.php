@@ -1,20 +1,20 @@
 <?php if( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once PATH_THIRD.'tgl_twitter/classes/twitteroauth.php';
+require_once PATH_THIRD.'twitter/classes/twitteroauth.php';
 
 /**
- * Tgl_twitter
+ * Twitter
  *
- * This is nearly an identical port of the Ellislabs Twitter Timeline Add-on (http://expressionengine.com/downloads/details/twitter_timeline/)
- * with slight modifications to a few methods to support REST Twitter API access vs. the Streaming Twitter API.  Some of the method names with
- * relation to cURL may be incorrect now that we are using oAuth.  Not really sure if oAuth also uses curl..
+ * This is an improvement on TGL_Twitter (https://github.com/bryantAXS/TGL_Twitter) which was an improvement on Ellislabs Twitter Timeline
+ * (http://expressionengine.com/downloads/details/twitter_timeline/). Twitter supports Twitter's API version 1.1 using oAuth.
  *
  * @package default
  * @author Derek Jones
  * @author Bryant Hughes
+ * @author Bryan Burgers
  */
 
-class Tgl_twitter
+class Twitter
 {
 
 	var $return_data	= '';
@@ -35,9 +35,9 @@ class Tgl_twitter
 	 *
 	 * @access	public
 	 */
-	function Tgl_twitter() {
+	function Twitter() {
 		// Adding an old-style constructor allows use on older installs of EE2.
-		Tgl_twitter::__construct();
+		Twitter::__construct();
 	}
 
 	/**
@@ -544,8 +544,8 @@ class Tgl_twitter
 
 		//this is where we have modified the plugin to fetch our data via oauth
 
-		$this->EE->load->model('tgl_twitter_model');
-		$settings = $this->EE->tgl_twitter_model->get_settings();
+		$this->EE->load->model('twitter_model');
+		$settings = $this->EE->twitter_model->get_settings();
 
 		// Read in our saved access token/secret
 		$access_token = $settings['access_token'];
