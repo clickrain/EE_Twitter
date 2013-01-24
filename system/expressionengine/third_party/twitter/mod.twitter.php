@@ -18,7 +18,6 @@ class Twitter
 {
 
 	var $return_data	= '';
-	var $base_url		= 'http://api.twitter.com/1/statuses/';
 	var $cache_name		= 'twitter_timeline_cache';
 	var $cache_expired	= FALSE;
 	var $rate_limit_hit = FALSE;
@@ -26,7 +25,6 @@ class Twitter
 	var $limit			= 20;
 	var $parameters		= array();
 	var $months			= array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-	var $entities		= array('user_mentions' => FALSE, 'urls' => FALSE, 'hashtags' => FALSE);
 	var $use_stale;
 
 
@@ -57,51 +55,34 @@ class Twitter
 		$this->limit		= $this->EE->TMPL->fetch_param('limit', $this->limit);
 		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
 		$this->screen_name	= $this->EE->TMPL->fetch_param('screen_name');
-		$create_links		= $this->EE->TMPL->fetch_param('create_links', '');
 
-		$create_links = explode('|', $create_links);
-
-		foreach ($create_links as $name)
+		if (!$this->screen_name)
 		{
-			if (isset($this->entities[$name]))
-			{
-				$this->entities[$name] = TRUE;
-				$this->parameters['include_entities'] = 'true';
-			}
+			$this->EE->TMPL->log_item("Parameter screen_name was not provided");
+			return;
 		}
 
 		// timeline type
-		$timeline = 'public';
-		$log_extra = '';
+		$timeline	= 'user';
+		$log_extra	= "For User {$this->screen_name}";
 
-		if ($this->screen_name)
-		{
-			$timeline	= 'user';
-			$log_extra	= "For User {$this->screen_name}";
-
-			$this->parameters['screen_name'] = $this->screen_name;
-		}
+		$this->parameters['screen_name'] = $this->screen_name;
 
 		$this->EE->TMPL->log_item("Using '{$timeline}' Twitter Timeline {$log_extra}");
 
-
-		// build url
-		$url = $this->base_url.$timeline.'_timeline.xml';
+		// Create a unique ID for caching.
+		$uniqueid = $timeline.'_timeline'.$this->screen_name;
 
 		if (count($this->parameters))
 		{
-			$qs = '?';
-
 			foreach ($this->parameters as $k => $v)
 			{
-				$qs .= urlencode($k).'='.urlencode($v).'&';
+				$uniqueid .= '/' . urlencode($k) . '=' . urlencode($v);
 			}
-
-			$url .= rtrim($qs, '&');
 		}
 
 		// retrieve statuses
-		$statuses = $this->_fetch_data($url);
+		$statuses = $this->_fetch_data($uniqueid);
 
 		if ( ! $statuses)
 		{
@@ -154,12 +135,6 @@ class Twitter
 
 				foreach ($val['entities'] as $type => $found)
 				{
-
-					if ( ! isset($this->entities[$type]) )
-					{
-						continue;
-					}
-
 					foreach ($found as $info)
 					{
 						switch($type)
@@ -331,10 +306,10 @@ class Twitter
 	 * @access	public
 	 * @return	array
 	 */
-	function _fetch_data($url)
+	function _fetch_data($uniqueid)
 	{
 		$rawjson			= '';
-		$cached_json		= $this->_check_cache($url);
+		$cached_json		= $this->_check_cache($uniqueid);
 
 		if ($this->cache_expired OR ! $cached_json)
 		{
@@ -366,7 +341,7 @@ class Twitter
 
 				if ( ! $cached_json && $this->rate_limit_hit)
 				{
-					$this->_write_cache($rawjson, $url);
+					$this->_write_cache($rawjson, $uniqueid);
 				}
 
 				// Try to parse cache? Is it worth it?
@@ -375,7 +350,7 @@ class Twitter
 					return FALSE;
 				}
 
-				$this->EE->TMPL->log_item("Twitter Timeline Using Stale Cache: ".$url);
+				$this->EE->TMPL->log_item("Twitter Timeline Using Stale Cache: ".$uniqueid);
 			}
 			else
 			{
@@ -393,7 +368,7 @@ class Twitter
 
 			if ($this->rate_limit_hit && $this->cache_expired)
 			{
-				$this->_write_cache($cached_json, $url);
+				$this->_write_cache($cached_json, $uniqueid);
 			}
 
 			if ( ! $json_obj)
@@ -405,7 +380,7 @@ class Twitter
 		else
 		{
 			// We have (valid) new data - cache it
-			$this->_write_cache($rawjson, $url);
+			$this->_write_cache($rawjson, $uniqueid);
 		}
 
 		if ( ! is_array($json_obj) OR count($json_obj) == 0)
@@ -588,7 +563,7 @@ class Twitter
 		$oauth = new TwitterOAuth($settings['consumer_key'], $settings['consumer_secret'], $access_token, $access_token_secret);
 		$oauth->decode_json = FALSE;
 
-		$params = array('include_rts'=>'true', 'include_entities'=>'true', 'screen_name' => $this->screen_name);
+		$params = array('include_rts'=>'true', 'screen_name' => $this->screen_name);
 		$data = $oauth->get("statuses/user_timeline", $params);
 
 		return $data;
