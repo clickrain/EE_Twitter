@@ -1,12 +1,8 @@
-#TGL Twitter
+#ExpressionEngine Twitter
 
-TGL Twitter is nearly an identical port of EllisLabs Twitter Timeline plugin, however TGL Twitter has a CP Backend, allowing a user to authenticate with Twitter using oAuth.  
+ExpressionEngine Twitter is nearly an identical port of EllisLabs Twitter Timeline plugin, via Bryant Hughes's [TGL_Twitter](https://github.com/bryantAXS/TGL_Twitter). However ExpressionEngine Twitter has a CP Backend, allowing a user to authenticate with Twitter using oAuth.
 
-The initial reason for building this was because Twitter's Streaming API, which does not require authentication, limits your request by IP Address.  On a shared hosting setup, where many sites can be run off of one IP Address, this presents a problem.
-
-The syntax for the modle is nearly identical to that of the Twitter Timeline plugin, so please refer to that for template tag questions.
-
-This functionality of this plugin could easily be expanded to use more of Twitters API methods, I just originally needed it to display tweets.
+ExpressionEngine Twitter uses the Twitter 1.1 API, and provides tags that make it possible to conform to Twitter's [Display Requirements](https://dev.twitter.com/terms/display-requirements).
 
 ##Requirements
 
@@ -14,7 +10,7 @@ This functionality of this plugin could easily be expanded to use more of Twitte
 * Twitter Account
 
 ##Installation
-1. Add-ons -> Modules -> TGL_Twitter -> Install
+1. Add-ons -> Modules -> Twitter -> Install
 2. Login into http://dev.twitter.com Note: This does not have to be the account you are going to authorize with, or the account you are going to be displaying tweets for.  It is just the account that "owns" the application (your site).
 3. Click "Create a new application" button.
 4. Fillout the <i>Create an Application</i> form.  You do not need to enter a Callback URL.
@@ -24,9 +20,65 @@ This functionality of this plugin could easily be expanded to use more of Twitte
 
 ##Template Tags
 
-Please see: http://expressionengine.com/downloads/details/twitter_timeline/
+    {exp:twitter:user screen_name="biz" limit=5}
 
-**keep in mind that all tags use {exp:tgl_twitter} instead of {exp:twitter_timeline}**
+    {/exp:twitter:user}
+
+###Parameters
+
+`screen_name`
+
+The screen name of the person whose tweets you want to retrieve. This should not include the leading @ sign. Required.
+
+`limit`
+
+The maximum number of tweets to display. Defaults to whatever 20.
+
+`twitter_refresh`
+
+The time, in minutes, between calls to Twitter. Between these times, the tag will use the cached value. Defaults to 45.
+
+###Single Variable Tags
+
+**Dates**: `{relative_date}`, `{iso_date}`, `{created_at}`
+
+`{relative_date}` returns a string that conforms to Twitter Display Requirements. This will a relative date when the tweet occurred less than a day ago (eg "13h" or "29m"), or the date when the tweet occurred more than a day ago (eg "21 Apr 12"). `{iso_date}` returns the date in ISO8601 format. `{created_at}` returns the date as it is provided by Twitter's API (eg "Thu Jan 24 13:13:49 +0000 2013").
+
+**URLs**: `{permalink}`, `{reply_intent}`, `{retweet_intent}`, `{favorite_intent}`
+
+`{permalink}` returns the permanent Twitter URL. `{reply_intent}` includes a URL formatted for the Reply Intent. `{retweet_intent}` includes a URL formatted for the Retweet Intent. `{favorite_intent}` includes a URL formatted for the Reply Intent. See Twitter's [Display Requirements](https://dev.twitter.com/terms/display-requirements) and [Web Intents](https://dev.twitter.com/docs/intents) documentation.
+
+`{id}`
+
+The tweet's ID.
+
+`{text}`
+
+The text of the tweet, including HTML markup for mentions, links, and hashtags.
+
+`{name}`
+
+The name of the person who created the tweet.
+
+`{screen_name}`
+
+The screen name of the person who created the tweet. This does not include the leading "@".
+
+`{location}`
+
+The location of the person who created the tweet, according to their profile.
+
+`{description}`
+
+The description of the person who created the tweet, according to their profile.
+
+`{profile_image_url}`
+
+The profile image of the person who created the tweet, using the HTTP protocol.
+
+`{profile_image_url_https}`
+
+The profile image of the person who created the tweet, using the HTTPS protocol.
 
 ## Known Issues
 

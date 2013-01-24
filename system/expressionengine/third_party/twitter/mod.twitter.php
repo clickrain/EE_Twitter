@@ -184,6 +184,7 @@ class Twitter
 				unset($find, $replace);
 			}
 
+			$val['id'] = $val['id_str'];
 
 			// Add count
 
