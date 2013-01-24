@@ -127,9 +127,12 @@ class Twitter
 
 		$return_data = '';
 
+		$count = 0;
+
 		// Loop through all statuses and do our template replacements
 		foreach ($statuses as $val)
 		{
+
 			// If this is a retweet, let's use that data instead
 			if (isset($val['retweeted_status'])) {
 				$val = $val['retweeted_status'];
@@ -265,6 +268,10 @@ class Twitter
 					$tagdata	= $this->EE->TMPL->swap_var_single($var_key, $this->EE->localize->format_timespan($this->EE->localize->now - $date), $tagdata);
 				}
 
+				if ($var_key == 'relative_date')
+				{
+					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_relative_date($val), $tagdata);
+				}
 
 				// Parse all others, main array, user array, all others
 
@@ -582,6 +589,38 @@ class Twitter
 
 		return "{$parts[5]}-{$mm}-{$parts[2]} {$parts[3]}";
 
+	}
+
+	function _build_relative_date($status, $now = NULL) {
+		$dt = new DateTime($status['created_at']);
+		if (is_null($now)) {
+			$now = new DateTime();
+		}
+		$diff = $dt->diff($now);
+
+		$output = '';
+
+		if ($diff->d < 1) {
+			if ($diff->h > 0) {
+				$output = $diff->h . "h";
+			}
+			else if ($diff->i > 0) {
+				$output = $diff->i . "m";
+			}
+			else {
+				$output = $diff->s . "s";
+			}
+		}
+		else {
+			if ($dt->format('Y') == $now->format('Y')) {
+				$output = $dt->format("j M");
+			}
+			else {
+				$output = $dt->format("j M y");
+			}
+		}
+
+		return $output;
 	}
 
 }
