@@ -301,6 +301,10 @@ class Twitter
 		return $return_data;
 	}
 
+	public function script() {
+		return "<script type=\"text/javascript\" src=\"//platform.twitter.com/widgets.js\"></script>";
+	}
+
 	// --------------------------------------------------------------------
 
 	/**

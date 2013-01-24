@@ -20,11 +20,13 @@ ExpressionEngine Twitter uses the Twitter 1.1 API, and provides tags that make i
 
 ##Template Tags
 
+### User
+
     {exp:twitter:user screen_name="biz" limit=5}
 
     {/exp:twitter:user}
 
-###Parameters
+####Parameters
 
 `screen_name`
 
@@ -38,7 +40,7 @@ The maximum number of tweets to display. Defaults to whatever 20.
 
 The time, in minutes, between calls to Twitter. Between these times, the tag will use the cached value. Defaults to 45.
 
-###Single Variable Tags
+####Single Variable Tags
 
 **Dates**: `{relative_date}`, `{iso_date}`, `{created_at}`
 
@@ -83,6 +85,14 @@ The profile image of the person who created the tweet, using the HTTPS protocol.
 **Retweets**: `{if retweeted}`, `{retweeter}`
 
 If the tweet is a retweet, the _original_ tweet will be shown. Use `{if retweet}` to determine if the tweet being shown is a retweet. `{retweeter}` will then include the name of the person that retweeted the tweet.
+
+### Script
+
+    {exp:twitter:script}
+
+Outputs the standard Twitter platform script:
+
+    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
 
 ## Known Issues
 
