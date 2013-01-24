@@ -273,6 +273,11 @@ class Twitter
 					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_relative_date($val), $tagdata);
 				}
 
+				if ($var_key == 'iso_date')
+				{
+					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_iso_date($val), $tagdata);
+				}
+
 				// Parse all others, main array, user array, all others
 
 				if (isset($val[$var_key]))
@@ -621,6 +626,10 @@ class Twitter
 		}
 
 		return $output;
+	}
+
+	function _build_iso_date($status) {
+		return (new DateTime($status['created_at']))->format(DateTime::ISO8601);
 	}
 
 }
