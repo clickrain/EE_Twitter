@@ -217,7 +217,7 @@ class Twitter_model extends CI_Model {
 	function delete_all_settings()
 	{
 
-		// clense current settings out of DB : we add the WHERE site_id = $site_id, because the only setting we want to save is the module_id
+		// cleanse current settings out of DB : we add the WHERE site_id = $site_id, because the only setting we want to save is the module_id
 		// setting, which is set to site_id 0 -- because its not site specific
 		$sql = "DELETE FROM exp_twitter_settings WHERE site_id = $this->site_id";
 		return $this->db->query($sql);
