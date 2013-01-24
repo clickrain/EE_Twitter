@@ -29,6 +29,17 @@ class Tgl_twitter
 	var $entities		= array('user_mentions' => FALSE, 'urls' => FALSE, 'hashtags' => FALSE);
 	var $use_stale;
 	
+
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 */
+	function Tgl_twitter() {
+		// Adding an old-style constructor allows use on older installs of EE2.
+		Tgl_twitter::__construct();
+	}
+
 	/**
 	 * Constructor
 	 *
@@ -144,10 +155,13 @@ class Tgl_twitter
 										$replace[]	= "<a title='{$info['name']}' href='http://twitter.com/{$info['screen_name']}'>@{$info['screen_name']}</a>";
 								break;
 							case 'hashtags':		$find[]		= '#'.$info['text'];
-													$replace[]	= "<a title='Search for {$info['text']}' href='http://twitter.com/search?q=%23{$info['text']}'>#{$info['text']}</a>";
+													// Because EE's xss_clean replaces %23 with #, we need to use %2523; EE changes %25 into %, so we get %23.
+													$replace[]	= "<a title='Search for {$info['text']}' href='http://twitter.com/search?q=%2523{$info['text']}'>#{$info['text']}</a>";
 								break;
 							case 'urls':			$find[]		= $info['url'];
-													$replace[]	= "<a title='{$info['expanded_url']}' href='{$info['url']}'>{$info['url']}</a>";
+								$displayurl = $info['url'];
+								if (isset($info['display_url'])) { $displayurl = $info['display_url']; }
+													$replace[]	= "<a title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
 						}
 					}
 				}
