@@ -4,7 +4,7 @@
  * Model that handles DB communication for the Twitter Module
  *
  * @author Bryant Hughes
- * @version 0.1
+ * @version 1.0
  **/
 
 class Twitter_model extends CI_Model {
