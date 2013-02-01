@@ -650,7 +650,8 @@ class Twitter
 	}
 
 	function _build_iso_date($status) {
-		return (new DateTime($status['created_at']))->format(DateTime::ISO8601);
+		$dt = new DateTime($status['created_at']);
+		return $dt->format(DateTime::ISO8601);
 	}
 
 }
