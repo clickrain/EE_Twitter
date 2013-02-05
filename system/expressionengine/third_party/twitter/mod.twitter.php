@@ -111,9 +111,15 @@ class Twitter
 		$count = 0;
 
 		// Loop through all statuses and do our template replacements
-		foreach ($statuses as $val)
+		foreach ($statuses as $key => $val)
 		{
+			$count++;
 
+			if ($count > $this->limit)
+			{
+				break;
+			}
+			
 			// If this is a retweet, let's use that data instead
 			$retweeted = FALSE;
 			if (isset($val['retweeted_status'])) {
@@ -124,12 +130,6 @@ class Twitter
 			}
 
 			$tagdata = $this->EE->TMPL->tagdata;
-			$count++;
-
-			if ($count > $this->limit)
-			{
-				return;
-			}
 
 			// Link up anything that needs to be linked up
 			if (isset($val['entities']) && is_array($val['entities']))
