@@ -55,7 +55,7 @@ class Twitter
 		$this->limit		= $this->EE->TMPL->fetch_param('limit', $this->limit);
 		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
 		$this->screen_name	= $this->EE->TMPL->fetch_param('screen_name');
-		$this->target		= $this->EE->TMPL->fetch_param('target', '_blank');
+		$this->target		= $this->EE->TMPL->fetch_param('target', '');
 
 		if (!$this->screen_name)
 		{
