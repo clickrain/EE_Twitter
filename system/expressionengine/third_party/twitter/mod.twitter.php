@@ -55,6 +55,7 @@ class Twitter
 		$this->limit		= $this->EE->TMPL->fetch_param('limit', $this->limit);
 		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
 		$this->screen_name	= $this->EE->TMPL->fetch_param('screen_name');
+		$this->target		= $this->EE->TMPL->fetch_param('target', '');
 
 		if (!$this->screen_name)
 		{
@@ -144,16 +145,16 @@ class Twitter
 						switch($type)
 						{
 							case 'user_mentions':	$find[]		= '@'.$info['screen_name'];
-										$replace[]	= "<a title='{$info['name']}' href='http://twitter.com/{$info['screen_name']}'>@{$info['screen_name']}</a>";
+										$replace[]	= "<a target='".$this->target."' title='{$info['name']}' href='http://twitter.com/{$info['screen_name']}'>@{$info['screen_name']}</a>";
 								break;
 							case 'hashtags':		$find[]		= '#'.$info['text'];
 													// Because EE's xss_clean replaces %23 with #, we need to use %2523; EE changes %25 into %, so we get %23.
-													$replace[]	= "<a title='Search for {$info['text']}' href='http://twitter.com/search?q=%2523{$info['text']}'>#{$info['text']}</a>";
+													$replace[]	= "<a target='".$this->target."' title='Search for {$info['text']}' href='http://twitter.com/search?q=%2523{$info['text']}'>#{$info['text']}</a>";
 								break;
 							case 'urls':			$find[]		= $info['url'];
 								$displayurl = $info['url'];
 								if (isset($info['display_url'])) { $displayurl = $info['display_url']; }
-													$replace[]	= "<a title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
+													$replace[]	= "<a target='".$this->target."' title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
 						}
 					}
 				}
