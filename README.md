@@ -40,6 +40,10 @@ The maximum number of tweets to display. Defaults to whatever 20.
 
 The time, in minutes, between calls to Twitter. Between these times, the tag will use the cached value. Defaults to 45.
 
+`target`
+
+Set the target for all links inside the tweets.
+
 ####Single Variable Tags
 
 **Dates**: `{relative_date}`, `{iso_date}`, `{created_at}`
