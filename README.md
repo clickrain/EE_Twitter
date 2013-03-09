@@ -8,6 +8,7 @@ ExpressionEngine Twitter uses the Twitter 1.1 API, and provides tags that make i
 
 * EE 2.0
 * Twitter Account
+* PHP 5 >= 5.3
 
 ##Installation
 1. Add-ons -> Modules -> Twitter -> Install
@@ -48,7 +49,7 @@ Set the target for all links inside the tweets.
 
 **Dates**: `{relative_date}`, `{iso_date}`, `{created_at}`
 
-`{relative_date}` returns a string that conforms to Twitter Display Requirements. This will a relative date when the tweet occurred less than a day ago (eg "13h" or "29m"), or the date when the tweet occurred more than a day ago (eg "21 Apr 12"). `{iso_date}` returns the date in ISO8601 format. `{created_at}` returns the date as it is provided by Twitter's API (eg "Thu Jan 24 13:13:49 +0000 2013").
+`{relative_date}` returns a string that conforms to Twitter Display Requirements. This will a relative date when the tweet occurred less than a day ago (eg "13h" or "29m"), or the date when the tweet occurred more than a day ago (eg "21 Apr 12"). `{iso_date}` returns the date in ISO8601 format. `{created_at}` returns the date as it is provided by Twitter's API (eg "Thu Jan 24 13:13:49 +0000 2013"). `{relative_date}` requires PHP 5 >= 5.3.
 
 **URLs**: `{permalink}`, `{reply_intent}`, `{retweet_intent}`, `{favorite_intent}`
 
