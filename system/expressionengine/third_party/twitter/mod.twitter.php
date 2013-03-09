@@ -570,7 +570,7 @@ class Twitter
 		$access_token_secret = $settings['access_token_secret'];
 
 		// Create our twitter API object
-		$oauth = new TwitterOAuth($settings['consumer_key'], $settings['consumer_secret'], $access_token, $access_token_secret);
+		$oauth = new TwitterEETwitter_OAuth($settings['consumer_key'], $settings['consumer_secret'], $access_token, $access_token_secret);
 		$oauth->decode_json = FALSE;
 
 		$params = array('include_rts'=>'true', 'screen_name' => $this->screen_name);

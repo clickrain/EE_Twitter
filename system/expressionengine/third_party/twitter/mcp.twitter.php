@@ -99,7 +99,7 @@ class Twitter_mcp
 		$this->EE->load->model('twitter_model');
 		$settings = $this->EE->twitter_model->get_settings();
 
-		$oauth = new TwitterOAuth($settings['consumer_key'], $settings['consumer_secret']);
+		$oauth = new TwitterEETwitter_OAuth($settings['consumer_key'], $settings['consumer_secret']);
 		$request = $oauth->getRequestToken();
 
 		if($request != FALSE){
@@ -151,7 +151,7 @@ class Twitter_mcp
 		$requestToken = $settings['request_token'];
 		$requestTokenSecret = $settings['request_token_secret'];
 
-		$oauth = new TwitterOAuth('consumer_key', 'consumer_secret', $requestToken, $requestTokenSecret);
+		$oauth = new TwitterEETwitter_OAuth('consumer_key', 'consumer_secret', $requestToken, $requestTokenSecret);
 
 		// Generate access token by providing PIN for Twitter
 		$request = $oauth->getAccessToken(NULL, $settings['pin']);

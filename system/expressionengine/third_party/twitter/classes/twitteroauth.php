@@ -3,16 +3,16 @@
 /*
  * Abraham Williams (abraham@abrah.am) http://abrah.am
  *
- * The first PHP Library to support OAuth for Twitter's REST API.
+ * The first PHP Library to support EETwitter_OAuth for Twitter's REST API.
  */
 
-/* Load OAuth lib. You can find it at http://oauth.net */
+/* Load EETwitter_OAuth lib. You can find it at http://oauth.net */
 require_once('OAuth.php');
 
 /**
- * Twitter OAuth class
+ * Twitter EETwitter_OAuth class
  */
-class TwitterOAuth {
+class TwitterEETwitter_OAuth {
   /* Contains the last HTTP status code returned. */
   public $http_code;
   /* Contains the last API call. */
@@ -32,7 +32,7 @@ class TwitterOAuth {
   /* Contains the last HTTP headers returned. */
   public $http_info;
   /* Set the useragnet. */
-  public $useragent = 'TwitterOAuth v0.2.0-beta2';
+  public $useragent = 'TwitterEETwitter_OAuth v0.2.0-beta2';
   /* Immediately retry the API call if the response was not successful. */
   //public $retry = TRUE;
 
@@ -54,13 +54,13 @@ class TwitterOAuth {
   function lastAPICall() { return $this->last_api_call; }
 
   /**
-   * construct TwitterOAuth object
+   * construct TwitterEETwitter_OAuth object
    */
   function __construct($consumer_key, $consumer_secret, $oauth_token = NULL, $oauth_token_secret = NULL) {
-    $this->sha1_method = new OAuthSignatureMethod_HMAC_SHA1();
-    $this->consumer = new OAuthConsumer($consumer_key, $consumer_secret);
+    $this->sha1_method = new EETwitter_OAuthSignatureMethod_HMAC_SHA1();
+    $this->consumer = new EETwitter_OAuthConsumer($consumer_key, $consumer_secret);
     if (!empty($oauth_token) && !empty($oauth_token_secret)) {
-      $this->token = new OAuthConsumer($oauth_token, $oauth_token_secret);
+      $this->token = new EETwitter_OAuthConsumer($oauth_token, $oauth_token_secret);
     } else {
       $this->token = NULL;
     }
@@ -78,14 +78,14 @@ class TwitterOAuth {
       $parameters['oauth_callback'] = $oauth_callback;
     }
     $request = $this->oAuthRequest($this->requestTokenURL(), 'GET', $parameters);
-		$token = OAuthUtil::parse_parameters($request);
+		$token = EETwitter_OAuthUtil::parse_parameters($request);
 
 		//for error handling
 		if(! isset($token['oauth_token'])){
 			return FALSE;
 		}
 
-    $this->token = new OAuthConsumer($token['oauth_token'], $token['oauth_token_secret']);
+    $this->token = new EETwitter_OAuthConsumer($token['oauth_token'], $token['oauth_token_secret']);
     return $token;
   }
 
@@ -120,13 +120,13 @@ class TwitterOAuth {
 		  } else {
 		    $request = $this->oAuthRequest($this->accessTokenURL());
 		  }
-		  $token = OAuthUtil::parse_parameters($request);
+		  $token = EETwitter_OAuthUtil::parse_parameters($request);
 
 			if(! isset($token['oauth_token'])){
 				return FALSE;
 			}
 
-			$this->token = new OAuthConsumer($token['oauth_token'], $token['oauth_token_secret']);
+			$this->token = new EETwitter_OAuthConsumer($token['oauth_token'], $token['oauth_token_secret']);
 		  return $token;
 		}
 
@@ -145,8 +145,8 @@ class TwitterOAuth {
     $parameters['x_auth_password'] = $password;
     $parameters['x_auth_mode'] = 'client_auth';
     $request = $this->oAuthRequest($this->accessTokenURL(), 'POST', $parameters);
-    $token = OAuthUtil::parse_parameters($request);
-    $this->token = new OAuthConsumer($token['oauth_token'], $token['oauth_token_secret']);
+    $token = EETwitter_OAuthUtil::parse_parameters($request);
+    $this->token = new EETwitter_OAuthConsumer($token['oauth_token'], $token['oauth_token_secret']);
     return $token;
   }
 
@@ -184,13 +184,13 @@ class TwitterOAuth {
   }
 
   /**
-   * Format and sign an OAuth / API request
+   * Format and sign an EETwitter_OAuth / API request
    */
   function oAuthRequest($url, $method, $parameters) {
     if (strrpos($url, 'https://') !== 0 && strrpos($url, 'http://') !== 0) {
       $url = "{$this->host}{$url}.{$this->format}";
     }
-    $request = OAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $parameters);
+    $request = EETwitter_OAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $parameters);
     $request->sign_request($this->sha1_method, $this->consumer, $this->token);
     switch ($method) {
     case 'GET':
