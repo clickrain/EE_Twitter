@@ -56,6 +56,8 @@ class Twitter
 		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
 		$this->screen_name	= $this->EE->TMPL->fetch_param('screen_name');
 		$this->target		= $this->EE->TMPL->fetch_param('target', '');
+		$prefix = $this->EE->TMPL->fetch_param('prefix', '');
+		$userprefix = $this->EE->TMPL->fetch_param('userprefix', NULL);
 
 		if (!$this->screen_name)
 		{
@@ -90,7 +92,7 @@ class Twitter
 			return;
 		}
 
-		$return_data = $this->render_tweets($statuses);
+		$return_data = $this->render_tweets($statuses, $prefix, $userprefix);
 		return $return_data;
 	}
 
@@ -98,11 +100,22 @@ class Twitter
 		return "<script type=\"text/javascript\" src=\"//platform.twitter.com/widgets.js\"></script>";
 	}
 
-	private function render_tweets($statuses) {
+	private function render_tweets($statuses, $prefix, $userprefix) {
+
 
 		if ( ! $statuses)
 		{
 			return;
+		}
+
+		if ($prefix != '') {
+			$prefix = $prefix . ':';
+		}
+		if (is_null($userprefix)) {
+			$userprefix = $prefix;
+		}
+		else if ($userprefix != '') {
+			$userprefix = $userprefix . ':';
 		}
 
 		$count = 0;
@@ -186,29 +199,29 @@ class Twitter
 			$tagdata = $this->EE->functions->prep_conditionals($tagdata, $cond);
 
 
-			$variables['permalink'] = $this->_build_permalink($val);
-			$variables['reply_intent'] = $this->_build_reply_intent($val);
-			$variables['reply_intent'] = $this->_build_retweet_intent($val);
-			$variables['reply_intent'] = $this->_build_favorite_intent($val);
-			$variables['relative_date'] = $this->_build_relative_date($val);
-			$variables['iso_date'] = $this->_build_iso_date($val);
-			$variables['created_at'] = strtotime($val['created_at']);
+			$variables[$prefix . 'permalink'] = $this->_build_permalink($val);
+			$variables[$prefix . 'reply_intent'] = $this->_build_reply_intent($val);
+			$variables[$prefix . 'reply_intent'] = $this->_build_retweet_intent($val);
+			$variables[$prefix . 'reply_intent'] = $this->_build_favorite_intent($val);
+			$variables[$prefix . 'relative_date'] = $this->_build_relative_date($val);
+			$variables[$prefix . 'iso_date'] = $this->_build_iso_date($val);
+			$variables[$prefix . 'created_at'] = strtotime($val['created_at']);
+			$variables[$prefix . 'id'] = $val['id'];
+			$variables[$prefix . 'text'] = $val['text'];
 
-			$variables['id'] = $val['id'];
-			$variables['text'] = $val['text'];
-			$variables['name'] = $val['user']['name'];
-			$variables['screen_name'] = $val['user']['screen_name'];
-			$variables['location'] = $val['location'];
-			$variables['description'] = $val['description'];
-			$variables['profile_image_url'] = $val['user']['profile_image_url'];
-			$variables['profile_image_url_https'] = $val['user']['profile_image_url_https'];
+			$variables[$userprefix . 'name'] = $val['user']['name'];
+			$variables[$userprefix . 'screen_name'] = $val['user']['screen_name'];
+			$variables[$userprefix . 'location'] = $val['user']['location'];
+			$variables[$userprefix . 'description'] = $val['user']['description'];
+			$variables[$userprefix . 'profile_image_url'] = $val['user']['profile_image_url'];
+			$variables[$userprefix . 'profile_image_url_https'] = $val['user']['profile_image_url_https'];
 
-			$variables['retweeted'] = $retweeted;
+			$variables[$prefix . 'retweeted'] = $retweeted;
 			if ($retweeted) {
-				$variables['retweeter'] = $val['retweeter'];
+				$variables[$prefix . 'retweeter'] = $val['retweeter'];
 			}
 			else {
-				$variables['retweeter'] = '';
+				$variables[$prefix . 'retweeter'] = '';
 			}
 
 			$loopvars[] = $variables;

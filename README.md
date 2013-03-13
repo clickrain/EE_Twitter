@@ -45,6 +45,14 @@ The time, in minutes, between calls to Twitter. Between these times, the tag wil
 
 Set the target for all links inside the tweets.
 
+`prefix`
+
+Set a prefix to use for the tags. This turns `{id}` into `{yourprefix:id}`. Defaults to no prefix.
+
+`userprefix`
+
+Set a prefix to use for the user tags (`{name}`, `{screen_name}`, `{location}`, `{description}`, `{profile_image_url}`). Defaults to what `prefix` is set to.
+
 ####Single Variable Tags
 
 **Dates**: `{relative_date}`, `{iso_date}`, `{created_at}`
