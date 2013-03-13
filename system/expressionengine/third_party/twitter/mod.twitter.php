@@ -531,35 +531,48 @@ class Twitter
 	}
 
 	function _build_relative_date($status, $now = NULL) {
-		$dt = new DateTime($status['created_at']);
-		if (is_null($now)) {
-			$now = new DateTime();
-		}
-		$diff = $dt->diff($now);
-
-		$output = '';
-
-		if ($diff->d < 1) {
-			if ($diff->h > 0) {
-				$output = $diff->h . "h";
+		try {
+			$dt = new DateTime($status['created_at']);
+			if (is_null($now)) {
+				$now = new DateTime();
 			}
-			else if ($diff->i > 0) {
-				$output = $diff->i . "m";
+
+			if (!method_exists($dt, 'diff')) {
+				throw new Exception("diff method doesn't exist");
+			}
+			$diff = $dt->diff($now);
+
+			$output = '';
+
+			if ($diff->d < 1) {
+				if ($diff->h > 0) {
+					$output = $diff->h . "h";
+				}
+				else if ($diff->i > 0) {
+					$output = $diff->i . "m";
+				}
+				else {
+					$output = $diff->s . "s";
+				}
 			}
 			else {
-				$output = $diff->s . "s";
+				if ($dt->format('Y') == $now->format('Y')) {
+					$output = $dt->format("j M");
+				}
+				else {
+					$output = $dt->format("j M y");
+				}
 			}
-		}
-		else {
-			if ($dt->format('Y') == $now->format('Y')) {
-				$output = $dt->format("j M");
-			}
-			else {
-				$output = $dt->format("j M y");
-			}
-		}
 
-		return $output;
+			return $output;
+		}
+		catch (Exception $e) {
+			// If diff method doesn't exist, let's just give back the date.
+			// Maybe somebody who uses an old version of PHP can build out the relative
+			// date using something other than DateTime::diff
+			$dt = new DateTime($status['created_at']);
+			return $dt->format("j M y");
+		}
 	}
 
 	function _build_iso_date($status) {
