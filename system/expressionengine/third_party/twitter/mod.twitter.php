@@ -90,37 +90,37 @@ class Twitter
 			return;
 		}
 
+		$return_data = $this->render_tweets($statuses);
+		return $return_data;
+	}
 
-		// Some variables needed for the parsing process
+	public function script() {
+		return "<script type=\"text/javascript\" src=\"//platform.twitter.com/widgets.js\"></script>";
+	}
 
-		$count		= 0;
-		$created_at	= array();
+	private function render_tweets($statuses) {
 
-
-		// parse created_at date variables outside of the loop to save processing
-		if (preg_match_all("/".LD."(user_)?created_at\s+format=(\042|\047)([^\\2]*?)\\2".RD."/s", $this->EE->TMPL->tagdata, $matches))
+		if ( ! $statuses)
 		{
-			for ($i = 0; $i < count($matches['0']); $i++)
-			{
-				$matches['0'][$i] = str_replace(array(LD, RD), '', $matches['0'][$i]);
-				$created_at[$matches['0'][$i]] = $this->EE->localize->fetch_date_params($matches['3'][$i]);
-			}
+			return;
 		}
 
-		$return_data = '';
-
 		$count = 0;
+
+		$loopvars = array();
 
 		// Loop through all statuses and do our template replacements
 		foreach ($statuses as $key => $val)
 		{
+			$variables = array();
+
 			$count++;
 
 			if ($count > $this->limit)
 			{
 				break;
 			}
-			
+
 			// If this is a retweet, let's use that data instead
 			$retweeted = FALSE;
 			if (isset($val['retweeted_status'])) {
@@ -186,124 +186,36 @@ class Twitter
 			$tagdata = $this->EE->functions->prep_conditionals($tagdata, $cond);
 
 
-			// Parse all found variables
+			$variables['permalink'] = $this->_build_permalink($val);
+			$variables['reply_intent'] = $this->_build_reply_intent($val);
+			$variables['reply_intent'] = $this->_build_retweet_intent($val);
+			$variables['reply_intent'] = $this->_build_favorite_intent($val);
+			$variables['relative_date'] = $this->_build_relative_date($val);
+			$variables['iso_date'] = $this->_build_iso_date($val);
+			$variables['created_at'] = strtotime($val['created_at']);
 
-			foreach ($this->EE->TMPL->var_single as $var_key => $var_val)
-			{
-				// parse {switch} variable
+			$variables['id'] = $val['id'];
+			$variables['text'] = $val['text'];
+			$variables['name'] = $val['user']['name'];
+			$variables['screen_name'] = $val['user']['screen_name'];
+			$variables['location'] = $val['location'];
+			$variables['description'] = $val['description'];
+			$variables['profile_image_url'] = $val['user']['profile_image_url'];
+			$variables['profile_image_url_https'] = $val['user']['profile_image_url_https'];
 
-				if (preg_match("/^switch\s*=.+/i", $var_key))
-				{
-					$sparam = $this->EE->functions->assign_parameters($var_key);
-
-					$sw = '';
-
-					if (isset($sparam['switch']))
-					{
-						$sopt = explode("|", $sparam['switch']);
-
-						$sw = $sopt[($count-1 + count($sopt)) % count($sopt)];
-					}
-
-					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $sw, $tagdata);
-				}
-
-
-				// parse {created_at}
-
-				if (isset($created_at[$var_key]))
-				{
-					$date = ($var_key[0] == 'u') ? $statuses[$key]['user']['user_created_at'] : $statuses[$key]['created_at'];
-
-					$human_time = $this->_parse_twitter_date($date);
-
-					// We already have GMT so we need $this->EE->localize->convert_human_date_to_gmt to
-					// NOT do any localization.  Fib the Session userdata for sec.
-					$dst		= $this->EE->session->userdata['daylight_savings'];
-					$timezone	= $this->EE->session->userdata['timezone'];
-
-					$this->EE->session->userdata['timezone'] = 'UTC';
-					$this->EE->session->userdata['daylight_savings'] = 'n';
-
-					$date = $this->EE->localize->convert_human_date_to_gmt($human_time);
-
-					// reset Session userdata to original values
-					$this->EE->session->userdata['timezone'] = $timezone;
-					$this->EE->session->userdata['daylight_savings'] = $dst;
-
-					foreach ($created_at[$var_key] as $dvar)
-					{
-						$var_val = str_replace($dvar, $this->EE->localize->convert_timestamp($dvar, $date, TRUE), $var_val);
-					}
-
-					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $var_val, $tagdata);
-				}
-
-
-				// Parse {status_relative_date}
-
-				if ($var_key == 'status_relative_date')
-				{
-					$human_time	= $this->_parse_twitter_date($val['created_at']);
-
-					$date		= $this->EE->localize->set_server_time($this->EE->localize->convert_human_date_to_gmt($human_time));
-					$tagdata	= $this->EE->TMPL->swap_var_single($var_key, $this->EE->localize->format_timespan($this->EE->localize->now - $date), $tagdata);
-				}
-
-				if ($var_key == 'permalink')
-				{
-					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_permalink($val), $tagdata);
-				}
-
-				if ($var_key == 'reply_intent')
-				{
-					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_reply_intent($val), $tagdata);
-				}
-
-				if ($var_key == 'retweet_intent')
-				{
-					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_retweet_intent($val), $tagdata);
-				}
-
-				if ($var_key == 'favorite_intent')
-				{
-					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_favorite_intent($val), $tagdata);
-				}
-
-				if ($var_key == 'relative_date')
-				{
-					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_relative_date($val), $tagdata);
-				}
-
-				if ($var_key == 'iso_date')
-				{
-					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $this->_build_iso_date($val), $tagdata);
-				}
-
-				// Parse all others, main array, user array, all others
-
-				if (isset($val[$var_key]))
-				{
-					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $val[$var_key], $tagdata);
-				}
-				elseif (isset($val['user'][$var_key]))
-				{
-					$tagdata = $this->EE->TMPL->swap_var_single($var_key, $val['user'][$var_key], $tagdata);
-				}
-				else
-				{
-					$tagdata = $this->EE->TMPL->swap_var_single($var_key, '', $tagdata);
-				}
+			$variables['retweeted'] = $retweeted;
+			if ($retweeted) {
+				$variables['retweeter'] = $val['retweeter'];
+			}
+			else {
+				$variables['retweeter'] = '';
 			}
 
-			$return_data .= $tagdata;
+			$loopvars[] = $variables;
 		}
 
-		return $return_data;
-	}
-
-	public function script() {
-		return "<script type=\"text/javascript\" src=\"//platform.twitter.com/widgets.js\"></script>";
+		$output = $this->EE->TMPL->parse_variables($this->EE->TMPL->tagdata, $loopvars);
+		return $output;
 	}
 
 	// --------------------------------------------------------------------
