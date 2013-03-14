@@ -1,7 +1,7 @@
 <?php
 class Twitter_upd
 {
-	public $version = '1.0.4';
+	public $version = '1.1.0';
 
 	public function __construct()
 	{
