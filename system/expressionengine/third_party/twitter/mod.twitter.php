@@ -54,12 +54,12 @@ class Twitter
 		$this->refresh		= $this->EE->TMPL->fetch_param('twitter_refresh', $this->refresh);
 		$this->limit		= $this->EE->TMPL->fetch_param('limit', $this->limit);
 		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
-		$this->screen_name	= $this->EE->TMPL->fetch_param('screen_name');
 		$this->target		= $this->EE->TMPL->fetch_param('target', '');
+		$screen_name = $this->EE->TMPL->fetch_param('screen_name');
 		$prefix = $this->EE->TMPL->fetch_param('prefix', '');
 		$userprefix = $this->EE->TMPL->fetch_param('userprefix', NULL);
 
-		if (!$this->screen_name)
+		if (!$screen_name)
 		{
 			$this->EE->TMPL->log_item("Parameter screen_name was not provided");
 			return;
@@ -67,25 +67,15 @@ class Twitter
 
 		// timeline type
 		$timeline	= 'user';
-		$log_extra	= "For User {$this->screen_name}";
-
-		$this->parameters['screen_name'] = $this->screen_name;
+		$log_extra	= "For User {$screen_name}";
 
 		$this->EE->TMPL->log_item("Using '{$timeline}' Twitter Timeline {$log_extra}");
 
-		// Create a unique ID for caching.
-		$uniqueid = $timeline.'_timeline'.$this->screen_name;
-
-		if (count($this->parameters))
-		{
-			foreach ($this->parameters as $k => $v)
-			{
-				$uniqueid .= '/' . urlencode($k) . '=' . urlencode($v);
-			}
-		}
-
 		// retrieve statuses
-		$statuses = $this->_fetch_data($uniqueid);
+		$url = 'statuses/user_timeline';
+		$params = array('screen_name' => $screen_name, 'include_rts' => 'true');
+
+		$statuses = $this->_fetch_data($url, $params);
 
 		if ( ! $statuses)
 		{
@@ -231,7 +221,22 @@ class Twitter
 		return $output;
 	}
 
-	// --------------------------------------------------------------------
+	/**
+	 * Create a unique hash for the url and parameters.
+	 *
+	 * @param string $url The URL that will be passed to OAuth::get
+	 * @param array $params The parameters that will be passed to OAuth::get
+	 * @return string A unique, predictable hash
+	 */
+	private function hash_request($url, $params) {
+		$res = $url;
+		$separator = '?';
+		foreach ($params as $key => $val) {
+			$res .= $separator . urlencode($key) . '=' . urlencode($val);
+			$separator = '&';
+		}
+		return sha1($res);
+	}
 
 	/**
 	 * Fetch data
@@ -241,8 +246,9 @@ class Twitter
 	 * @access	public
 	 * @return	array
 	 */
-	function _fetch_data($uniqueid)
+	function _fetch_data($url, $params)
 	{
+		$uniqueid = $this->hash_request($url, $params);
 		$rawjson			= '';
 		$cached_json		= $this->_check_cache($uniqueid);
 
@@ -252,7 +258,7 @@ class Twitter
 
 			if ( function_exists('curl_init'))
 			{
-				$rawjson = $this->_curl_fetch();
+				$rawjson = $this->_curl_fetch($url, $params);
 			}
 			else {
 				// We only support CURL, because that's what oauth uses.
@@ -379,7 +385,7 @@ class Twitter
 	 * @param	bool	Allow pulling of stale cache file
 	 * @return	mixed - string if pulling from cache, FALSE if not
 	 */
-	function _check_cache($url)
+	function _check_cache($hash)
 	{
 		// Check for cache directory
 
@@ -392,7 +398,7 @@ class Twitter
 
 		// Check for cache file
 
-        $file = $dir.md5($url);
+        $file = $dir . $hash;
 
 		if ( ! file_exists($file) OR ! ($fp = @fopen($file, 'rb')))
 		{
@@ -407,12 +413,8 @@ class Twitter
 
 		fclose($fp);
 
-        // Grab the timestamp from the first line
-
-		$eol = strpos($cache, "\n");
-
-		$timestamp = substr($cache, 0, $eol);
-		$cache = trim((substr($cache, $eol)));
+        // Get when the cache file was last modified
+		$timestamp = filemtime($file);
 
 		if ( time() > ($timestamp + ($this->refresh * 60)) )
 		{
@@ -433,7 +435,7 @@ class Twitter
 	 * @param	string
 	 * @return	void
 	 */
-	function _write_cache($data, $url)
+	function _write_cache($data, $hash)
 	{
 		// Check for cache directory
 
@@ -449,13 +451,8 @@ class Twitter
 			@chmod($dir, 0777);
 		}
 
-		// add a timestamp to the top of the file
-		$data = time()."\n".$data;
-
-
 		// Write the cached data
-
-		$file = $dir.md5($url);
+		$file = $dir . $hash;
 
 		if ( ! $fp = @fopen($file, 'wb'))
 		{
@@ -481,7 +478,7 @@ class Twitter
 	 * @param	string
 	 * @return	string
 	 */
-	function _curl_fetch()
+	function _curl_fetch($url, $params)
 	{
 		$data = '';
 
@@ -498,8 +495,7 @@ class Twitter
 		$oauth = new TwitterEETwitter_OAuth($settings['consumer_key'], $settings['consumer_secret'], $access_token, $access_token_secret);
 		$oauth->decode_json = FALSE;
 
-		$params = array('include_rts'=>'true', 'screen_name' => $this->screen_name);
-		$data = $oauth->get("statuses/user_timeline", $params);
+		$data = $oauth->get($url, $params);
 
 		return $data;
 	}
