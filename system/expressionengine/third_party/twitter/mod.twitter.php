@@ -86,6 +86,39 @@ class Twitter
 		return $return_data;
 	}
 
+	public function search()
+	{
+		// Fetch parameters
+		$this->refresh		= $this->EE->TMPL->fetch_param('twitter_refresh', $this->refresh);
+		$this->limit		= $this->EE->TMPL->fetch_param('limit', $this->limit);
+		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
+		$this->target		= $this->EE->TMPL->fetch_param('target', '');
+		$query = $this->EE->TMPL->fetch_param('query');
+		$prefix = $this->EE->TMPL->fetch_param('prefix', '');
+		$userprefix = $this->EE->TMPL->fetch_param('userprefix', NULL);
+
+		if (!$query)
+		{
+			$this->EE->TMPL->log_item("Parameter query was not provided");
+			return;
+		}
+
+		// timeline type
+		$timeline	= 'search';
+		$log_extra	= "For search {$query}";
+
+		$this->EE->TMPL->log_item("Using '{$timeline}' Twitter Timeline {$log_extra}");
+
+		$url = "search/tweets";
+		$params = array('q' => $query, 'include_rts' =>'true');
+
+		// retrieve statuses
+		$data = $this->_fetch_data($url, $params);
+		$statuses = $data['statuses'];
+
+		return $this->render_tweets($statuses, $prefix, $userprefix);
+	}
+
 	public function script() {
 		return "<script type=\"text/javascript\" src=\"//platform.twitter.com/widgets.js\"></script>";
 	}

@@ -23,7 +23,7 @@ ExpressionEngine Twitter uses the Twitter 1.1 API, and provides tags that make i
 
 ### User
 
-    {exp:twitter:user screen_name="biz" limit=5}
+    {exp:twitter:user screen_name="biz" limit="5"}
 
     {/exp:twitter:user}
 
@@ -98,6 +98,24 @@ The profile image of the person who created the tweet, using the HTTPS protocol.
 **Retweets**: `{if retweeted}`, `{retweeter}`
 
 If the tweet is a retweet, the _original_ tweet will be shown. Use `{if retweet}` to determine if the tweet being shown is a retweet. `{retweeter}` will then include the name of the person that retweeted the tweet.
+
+### User
+
+    {exp:twitter:search query="#twitter" limit="5"}
+
+    {/exp:twitter:search}
+
+#### Parameters
+
+`query`
+
+The query to use to search Twitter. Required.
+
+All other parameters are the same as `{exp:twitter:user}`
+
+#### Single Variable Tags
+
+All variables are the same as `{exp:twitter:user}`
 
 ### Script
 
