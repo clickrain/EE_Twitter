@@ -99,7 +99,7 @@ The profile image of the person who created the tweet, using the HTTPS protocol.
 
 If the tweet is a retweet, the _original_ tweet will be shown. Use `{if retweet}` to determine if the tweet being shown is a retweet. `{retweeter}` will then include the name of the person that retweeted the tweet.
 
-### User
+### Search
 
     {exp:twitter:search query="#twitter" limit="5"}
 
