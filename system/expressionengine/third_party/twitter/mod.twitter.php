@@ -18,7 +18,8 @@ class Twitter
 {
 
 	var $return_data	= '';
-	var $cache_name		= 'twitter_timeline_cache';
+	var $cache_name		= 'twitter';
+	var $cache_path;
 	var $cache_expired	= FALSE;
 	var $rate_limit_hit = FALSE;
 	var $refresh		= 45;		// Period between cache refreshes, in minutes (purposely high default to prevent hitting twitter's rate limit on shared IPs - be careful)
@@ -46,6 +47,16 @@ class Twitter
 	function __construct()
 	{
 		$this->EE =& get_instance();
+
+		if ($this->EE->config->item('twitter_cache_path')) {
+			$this->cache_path = $this->EE->config->item('twitter_cache_path');
+			if (substr_compare($this->cache_path,  '/', -1, 1) !== 0) {
+				$this->cache_path = $this->cache_path . '/';
+			}
+		}
+		else {
+			$this->cache_path = APPPATH . 'cache/' . $this->cache_name . '/';
+		}
 	}
 
 	public function user()
@@ -422,7 +433,7 @@ class Twitter
 	{
 		// Check for cache directory
 
-		$dir = APPPATH.'cache/'.$this->cache_name.'/';
+		$dir = $this->cache_path;
 
 		if ( ! @is_dir($dir))
 		{
@@ -472,7 +483,7 @@ class Twitter
 	{
 		// Check for cache directory
 
-		$dir = APPPATH.'cache/'.$this->cache_name.'/';
+		$dir = $this->cache_path;
 
 		if ( ! @is_dir($dir))
 		{
