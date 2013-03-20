@@ -235,8 +235,8 @@ class Twitter
 
 			$variables[$prefix . 'permalink'] = $this->_build_permalink($val);
 			$variables[$prefix . 'reply_intent'] = $this->_build_reply_intent($val);
-			$variables[$prefix . 'reply_intent'] = $this->_build_retweet_intent($val);
-			$variables[$prefix . 'reply_intent'] = $this->_build_favorite_intent($val);
+			$variables[$prefix . 'retweet_intent'] = $this->_build_retweet_intent($val);
+			$variables[$prefix . 'favorite_intent'] = $this->_build_favorite_intent($val);
 			$variables[$prefix . 'relative_date'] = $this->_build_relative_date($val);
 			$variables[$prefix . 'iso_date'] = $this->_build_iso_date($val);
 			$variables[$prefix . 'created_at'] = strtotime($val['created_at']);

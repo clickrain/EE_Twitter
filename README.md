@@ -91,7 +91,7 @@ The description of the person who created the tweet, according to their profile.
 
 The profile image of the person who created the tweet, using the HTTP protocol.
 
-`{profile_image_url_https}`, `{profile}`
+`{profile_image_url_https}`, `{image}`
 
 The profile image of the person who created the tweet, using the HTTPS protocol.
 
