@@ -172,7 +172,7 @@ class Twitter
 			$retweeted = FALSE;
 			if (isset($val['retweeted_status'])) {
 				$retweeted = TRUE;
-				$retweeter = $val['user']['name'];
+				$retweeter = $val['user'];
 				$val = $val['retweeted_status'];
 				$val['retweeter'] = $retweeter;
 			}
@@ -249,10 +249,18 @@ class Twitter
 			$variables[$userprefix . 'description'] = $val['user']['description'];
 			$variables[$userprefix . 'profile_image_url'] = $val['user']['profile_image_url'];
 			$variables[$userprefix . 'profile_image_url_https'] = $val['user']['profile_image_url_https'];
+			$variables[$userprefix . 'image'] = $val['user']['profile_image_url_https'];
 
 			$variables[$prefix . 'retweeted'] = $retweeted;
 			if ($retweeted) {
-				$variables[$prefix . 'retweeter'] = $val['retweeter'];
+				$variables[$prefix . 'retweeter'] = $retweeter['name'];
+				$variables[$prefix . 'retweeter:name'] = $retweeter['name'];
+				$variables[$prefix . 'retweeter:screen_name'] = $retweeter['screen_name'];
+				$variables[$prefix . 'retweeter:location'] = $retweeter['location'];
+				$variables[$prefix . 'retweeter:description'] = $retweeter['description'];
+				$variables[$prefix . 'retweeter:profile_image_url'] = $retweeter['profile_image_url'];
+				$variables[$prefix . 'retweeter:profile_image_url_https'] = $retweeter['profile_image_url_https'];
+				$variables[$prefix . 'retweeter:image'] = $retweeter['profile_image_url_https'];
 			}
 			else {
 				$variables[$prefix . 'retweeter'] = '';

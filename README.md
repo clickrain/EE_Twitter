@@ -91,13 +91,15 @@ The description of the person who created the tweet, according to their profile.
 
 The profile image of the person who created the tweet, using the HTTP protocol.
 
-`{profile_image_url_https}`
+`{profile_image_url_https}`, `{profile}`
 
 The profile image of the person who created the tweet, using the HTTPS protocol.
 
 **Retweets**: `{if retweeted}`, `{retweeter}`
 
 If the tweet is a retweet, the _original_ tweet will be shown. Use `{if retweet}` to determine if the tweet being shown is a retweet. `{retweeter}` will then include the name of the person that retweeted the tweet.
+
+Also, `{retweeter:*}` exists for all user fields for the retweeter, so for example `{retweeter:profile_image_url_https}` will be the profile image of the retweeter.
 
 ### Search
 
