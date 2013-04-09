@@ -41,6 +41,14 @@ The maximum number of tweets to display. Defaults to whatever 20.
 
 The time, in minutes, between calls to Twitter. Between these times, the tag will use the cached value. Defaults to 45.
 
+`retweets`
+
+Include retweets in retrieved tweets. Options `yes`, `no`. Defaults to `yes`
+
+`replies`
+
+Include @ replies in retrieved tweets. Options `yes`, `no`. Defaults to `yes`
+
 `target`
 
 Set the target for all links inside the tweets.

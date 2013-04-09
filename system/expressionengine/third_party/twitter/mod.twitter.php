@@ -66,9 +66,11 @@ class Twitter
 		$this->limit		= $this->EE->TMPL->fetch_param('limit', $this->limit);
 		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
 		$this->target		= $this->EE->TMPL->fetch_param('target', '');
-		$screen_name = $this->EE->TMPL->fetch_param('screen_name');
-		$prefix = $this->EE->TMPL->fetch_param('prefix', '');
-		$userprefix = $this->EE->TMPL->fetch_param('userprefix', NULL);
+		$screen_name		= $this->EE->TMPL->fetch_param('screen_name');
+		$prefix				= $this->EE->TMPL->fetch_param('prefix', '');
+		$userprefix			= $this->EE->TMPL->fetch_param('userprefix', NULL);
+		$include_rts		= ($this->EE->TMPL->fetch_param('retweets', 'yes') == 'yes') ? TRUE : FALSE;
+		$exclude_replies	= ($this->EE->TMPL->fetch_param('replies', 'yes') == 'yes') ? FALSE : TRUE;
 
 		if (!$screen_name)
 		{
@@ -84,7 +86,7 @@ class Twitter
 
 		// retrieve statuses
 		$url = 'statuses/user_timeline';
-		$params = array('screen_name' => $screen_name, 'include_rts' => 'true');
+		$params = array('screen_name' => $screen_name, 'include_rts' => $include_rts, 'exclude_replies' => $exclude_replies);
 
 		$statuses = $this->_fetch_data($url, $params);
 
