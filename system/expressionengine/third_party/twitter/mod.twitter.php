@@ -208,7 +208,7 @@ class Twitter
 					}
 				}
 
-				$val['text'] = str_replace($find, $replace, $val['text']);
+				$val['text'] = str_ireplace($find, $replace, $val['text']);
 
 				unset($find, $replace);
 			}
