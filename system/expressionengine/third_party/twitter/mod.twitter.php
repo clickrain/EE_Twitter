@@ -64,6 +64,7 @@ class Twitter
 		// Fetch parameters
 		$this->refresh		= $this->EE->TMPL->fetch_param('twitter_refresh', $this->refresh);
 		$this->limit		= $this->EE->TMPL->fetch_param('limit', $this->limit);
+		$count              = $this->EE->TMPL->fetch_param('count');
 		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
 		$this->target		= $this->EE->TMPL->fetch_param('target', '');
 		$screen_name		= $this->EE->TMPL->fetch_param('screen_name');
@@ -87,7 +88,7 @@ class Twitter
 
 		// retrieve statuses
 		$url = 'statuses/user_timeline';
-		$params = array('screen_name' => $screen_name, 'include_rts' => $include_rts, 'exclude_replies' => $exclude_replies);
+		$params = array('screen_name' => $screen_name, 'include_rts' => $include_rts, 'exclude_replies' => $exclude_replies,  'count' => $count);
 
 		$statuses = $this->_fetch_data($url, $params);
 
