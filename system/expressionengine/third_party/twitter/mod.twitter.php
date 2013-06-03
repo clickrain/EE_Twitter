@@ -64,6 +64,7 @@ class Twitter
 		// Fetch parameters
 		$this->refresh		= $this->EE->TMPL->fetch_param('twitter_refresh', $this->refresh);
 		$this->limit		= $this->EE->TMPL->fetch_param('limit', $this->limit);
+		$count              = $this->EE->TMPL->fetch_param('count');
 		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
 		$this->target		= $this->EE->TMPL->fetch_param('target', '');
 		$screen_name		= $this->EE->TMPL->fetch_param('screen_name');
@@ -71,6 +72,7 @@ class Twitter
 		$userprefix			= $this->EE->TMPL->fetch_param('userprefix', NULL);
 		$include_rts		= ($this->EE->TMPL->fetch_param('retweets', 'yes') == 'yes') ? TRUE : FALSE;
 		$exclude_replies	= ($this->EE->TMPL->fetch_param('replies', 'yes') == 'yes') ? FALSE : TRUE;
+		$images_only     = ($this->EE->TMPL->fetch_param('images_only', "no") == 'yes') ? TRUE : FALSE;
 
 		if (!$screen_name)
 		{
@@ -86,7 +88,7 @@ class Twitter
 
 		// retrieve statuses
 		$url = 'statuses/user_timeline';
-		$params = array('screen_name' => $screen_name, 'include_rts' => $include_rts, 'exclude_replies' => $exclude_replies);
+		$params = array('screen_name' => $screen_name, 'include_rts' => $include_rts, 'exclude_replies' => $exclude_replies,  'count' => $count);
 
 		$statuses = $this->_fetch_data($url, $params);
 
@@ -95,7 +97,7 @@ class Twitter
 			return;
 		}
 
-		$return_data = $this->render_tweets($statuses, $prefix, $userprefix);
+		$return_data = $this->render_tweets($statuses, $prefix, $userprefix, $images_only);
 		return $return_data;
 	}
 
@@ -136,7 +138,7 @@ class Twitter
 		return "<script type=\"text/javascript\" src=\"//platform.twitter.com/widgets.js\"></script>";
 	}
 
-	private function render_tweets($statuses, $prefix, $userprefix) {
+	private function render_tweets($statuses, $prefix, $userprefix, $image_only = FALSE) {
 
 
 		if ( ! $statuses)
@@ -161,6 +163,13 @@ class Twitter
 		// Loop through all statuses and do our template replacements
 		foreach ($statuses as $key => $val)
 		{
+			//Check if tweet contains an image
+			//If no image is present and user has requested images only, skip this tweet
+			if (! isset($val['entities']['media']) && $images_only == TRUE)
+			{
+				continue;
+			}
+
 			$variables = array();
 
 			$count++;
@@ -204,6 +213,12 @@ class Twitter
 								$displayurl = $info['url'];
 								if (isset($info['display_url'])) { $displayurl = $info['display_url']; }
 													$replace[]	= "<a target='".$this->target."' title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
+							case 'media':
+								$images = array();
+								if($info['type'] == 'photo')
+								{
+									$images[] = array('image' => $info['media_url']);
+								}
 						}
 					}
 				}
@@ -244,6 +259,8 @@ class Twitter
 			$variables[$prefix . 'created_at'] = strtotime($val['created_at']);
 			$variables[$prefix . 'id'] = $val['id'];
 			$variables[$prefix . 'text'] = $val['text'];
+			if(isset($images))
+				$variables[$prefix . 'images'] = $images;
 
 			$variables[$userprefix . 'name'] = $val['user']['name'];
 			$variables[$userprefix . 'screen_name'] = $val['user']['screen_name'];
