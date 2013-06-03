@@ -37,6 +37,10 @@ The screen name of the person whose tweets you want to retrieve. This should not
 
 The maximum number of tweets to display. Defaults to whatever 20.
 
+`count`
+
+The number of tweets to retrieve. Defaults to 15
+
 `twitter_refresh`
 
 The time, in minutes, between calls to Twitter. Between these times, the tag will use the cached value. Defaults to 45.
@@ -60,6 +64,10 @@ Set a prefix to use for the tags. This turns `{id}` into `{yourprefix:id}`. Defa
 `userprefix`
 
 Set a prefix to use for the user tags (`{name}`, `{screen_name}`, `{location}`, `{description}`, `{profile_image_url}`). Defaults to what `prefix` is set to.
+
+`images_only`
+
+Only return tweets that contain images. Options `yes`, `no`. Defaults to `no`
 
 ####Single Variable Tags
 
@@ -114,6 +122,14 @@ The profile image of the person who created the tweet, using the HTTPS protocol.
 If the tweet is a retweet, the _original_ tweet will be shown. Use `{if retweet}` to determine if the tweet being shown is a retweet. `{retweeter}` will then include the name of the person that retweeted the tweet.
 
 Also, `{retweeter:*}` exists for all user fields for the retweeter, so for example `{retweeter:profile_image_url_https}` will be the profile image of the retweeter.
+
+### Variable Pairs
+
+**Images**: `{images}` Contains all images from the tweet. 
+
+`{image}` 
+
+The url to the image.
 
 ### Search
 
