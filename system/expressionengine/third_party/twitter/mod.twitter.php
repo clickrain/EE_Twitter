@@ -138,7 +138,7 @@ class Twitter
 		return "<script type=\"text/javascript\" src=\"//platform.twitter.com/widgets.js\"></script>";
 	}
 
-	private function render_tweets($statuses, $prefix, $userprefix, $image_only = FALSE) {
+	private function render_tweets($statuses, $prefix, $userprefix, $images_only = FALSE) {
 
 
 		if ( ! $statuses)
@@ -190,6 +190,8 @@ class Twitter
 
 			$tagdata = $this->EE->TMPL->tagdata;
 
+			$images = array();
+
 			// Link up anything that needs to be linked up
 			if (isset($val['entities']) && is_array($val['entities']))
 			{
@@ -214,10 +216,28 @@ class Twitter
 								if (isset($info['display_url'])) { $displayurl = $info['display_url']; }
 													$replace[]	= "<a target='".$this->target."' title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
 							case 'media':
-								$images = array();
-								if($info['type'] == 'photo')
+								$find[] = $info['url'];
+								$displayurl = $info['url'];
+								if (isset($info['display_url'])) { $displayurl = $info['display_url']; }
+								$replace[]  = "<a target='".$this->target."' title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
+								if(isset($info['type']) && $info['type'] == 'photo')
 								{
-									$images[] = array('image' => $info['media_url']);
+									$image = array(
+										'image' => $info['media_url']
+										);
+									foreach ($info['sizes'] as $size => $sizeval) {
+										$image = array_merge($image,
+											array(
+												'image' => $info['media_url'],
+												$size => $info['media_url'] . ':' . $size,
+												$size . '_https' => $info['media_url_https'] . ':' . $size,
+												$size . '_w' => $sizeval['w'],
+												$size . '_h' => $sizeval['h'],
+												$size . '_resize' => $sizeval['resize']
+												)
+											);
+									}
+									$images[] = $image;
 								}
 						}
 					}
@@ -259,8 +279,7 @@ class Twitter
 			$variables[$prefix . 'created_at'] = strtotime($val['created_at']);
 			$variables[$prefix . 'id'] = $val['id'];
 			$variables[$prefix . 'text'] = $val['text'];
-			if(isset($images))
-				$variables[$prefix . 'images'] = $images;
+			$variables[$prefix . 'images'] = $images;
 
 			$variables[$userprefix . 'name'] = $val['user']['name'];
 			$variables[$userprefix . 'screen_name'] = $val['user']['screen_name'];

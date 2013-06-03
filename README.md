@@ -125,11 +125,31 @@ Also, `{retweeter:*}` exists for all user fields for the retweeter, so for examp
 
 ### Variable Pairs
 
-**Images**: `{images}` Contains all images from the tweet. 
+**Images**: `{images}` Contains all images from the tweet.
 
-`{image}` 
+`{image}`
 
-The url to the image.
+The url to the image. This is essentially the same as `{medium}`, though the URL is slightly different.
+
+`{[size]}`
+
+The url to the image at `[size]`. Twitter crops images at four different sizes: _large_, _medium_, _small_, and _thumb_. See [Tweet Entities | Twitter Developers](https://dev.twitter.com/docs/tweet-entities) for more information. Example: `{large}`.
+
+`{[size]_https}`
+
+The url to the image at `[size]`, using HTTPS. Example: `{large_https}`.
+
+`{[size]_w}`
+
+The width of the image at `[size]`. Example: `{large_w}`.
+
+`{[size]_h}`
+
+The height of the image at `[size]`. Example: `{large_h}`.
+
+`{[size]_resize}`
+
+How Twitter resized the media to the particular `[size]`. Value can be either "crop" or "fit". Example: `{large_resize}`.
 
 ### Search
 
