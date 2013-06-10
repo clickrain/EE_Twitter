@@ -215,6 +215,7 @@ class Twitter
 								$displayurl = $info['url'];
 								if (isset($info['display_url'])) { $displayurl = $info['display_url']; }
 													$replace[]	= "<a target='".$this->target."' title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
+								break;
 							case 'media':
 								$find[] = $info['url'];
 								$displayurl = $info['url'];
@@ -239,6 +240,7 @@ class Twitter
 									}
 									$images[] = $image;
 								}
+								break;
 						}
 					}
 				}
