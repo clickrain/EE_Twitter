@@ -50,7 +50,7 @@ class Twitter_upd
 	public function update( $current = '' )
 	{
 		if($current == $this->version) { return FALSE; }
-		if($current == '1.4.1' && $current != $this->version) {
+		if($current != $this->version && $this->version == '1.4.2') {
 			$this->EE->db->query("RENAME TABLE exp_twitter_settings TO exp_cr_twitter_settings");
 		}
 		return TRUE;
