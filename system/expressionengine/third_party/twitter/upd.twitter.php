@@ -1,7 +1,9 @@
 <?php
 class Twitter_upd
 {
-	public $version = '1.4.1';
+	public $version = '1.4.2';
+
+	var $db_settings_table = 'cr_twitter_settings';
 
 	public function __construct()
 	{
@@ -30,7 +32,7 @@ class Twitter_upd
 
 		$this->EE->dbforge->add_field($fields);
 		$this->EE->dbforge->add_key('id', TRUE);
-		$this->EE->dbforge->create_table('twitter_settings');
+		$this->EE->dbforge->create_table($this->db_settings_table);
 
 		// get the module id
 		$results = $this->EE->db->query("SELECT * FROM exp_modules WHERE module_name = 'Twitter'");
@@ -38,7 +40,7 @@ class Twitter_upd
 
 		$sql = array();
 		$sql[] =
-					"INSERT IGNORE INTO exp_twitter_settings ".
+					"INSERT IGNORE INTO exp_{$this->db_settings_table} ".
 					"(id, site_id, var, var_value) VALUES ".
 					"('', '0', 'module_id', " . $module_id . ")";
 
@@ -48,6 +50,9 @@ class Twitter_upd
 	public function update( $current = '' )
 	{
 		if($current == $this->version) { return FALSE; }
+		if($current == '1.4.1' && $current != $this->version) {
+			$this->EE->db->query("RENAME TABLE exp_twitter_settings TO exp_cr_twitter_settings");
+		}
 		return TRUE;
 	}
 
@@ -57,7 +62,7 @@ class Twitter_upd
 
 		$this->EE->db->query("DELETE FROM exp_modules WHERE module_name = 'Twitter'");
 
-		$this->EE->dbforge->drop_table('twitter_settings');
+		$this->EE->dbforge->drop_table($this->db_settings_table);
 
 		return TRUE;
 	}

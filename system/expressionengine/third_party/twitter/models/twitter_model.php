@@ -4,7 +4,8 @@
  * Model that handles DB communication for the Twitter Module
  *
  * @author Bryant Hughes
- * @version 1.0
+ * @author Mark Drzycimski <mark@clickrain.com>
+ * @version 1.0.1
  **/
 
 class Twitter_model extends CI_Model {
@@ -13,6 +14,7 @@ class Twitter_model extends CI_Model {
 
 	var $_ee;
 	var $cache;
+	var $db_settings_table = 'exp_cr_twitter_settings';
 
 	function __construct()
 	{
@@ -40,7 +42,7 @@ class Twitter_model extends CI_Model {
 	{
 
 		$query = $this->db->query("SELECT *
-    FROM exp_twitter_settings
+    FROM {$this->db_settings_table}
     WHERE site_id = ". $this->site_id);
 
     $settings = false;
@@ -72,7 +74,7 @@ class Twitter_model extends CI_Model {
 		$success = true;
 
 		// get current settings out of DB
-		$sql = "SELECT * FROM exp_twitter_settings WHERE site_id = $this->site_id";
+		$sql = "SELECT * FROM {$this->db_settings_table} WHERE site_id = $this->site_id";
 		$settings_result = $this->db->query($sql);
 
 		$old_settings = $settings_result->result_array();
@@ -94,12 +96,12 @@ class Twitter_model extends CI_Model {
 			{
         // $key = $DB->escape_str($key);
         if(!$this->db->query($this->db->insert_string(
-         "exp_twitter_settings",
-         array(
-           'var'       => $key,
-           'var_value' => $value,
-           'site_id'   => $this->site_id
-         )
+        	$this->db_settings_table,
+			array(
+				'var'       => $key,
+				'var_value' => $value,
+				'site_id'   => $this->site_id
+			)
         ))){
           $success = false;
         }
@@ -125,17 +127,17 @@ class Twitter_model extends CI_Model {
 
 		$this->db->where('site_id', $this->site_id);
 		$this->db->where('var', 'request_token');
-		if( ! $this->db->delete('exp_twitter_settings')){
+		if( ! $this->db->delete($this->db_settings_table)){
 			$success = false;
 		}
 
 		$this->db->where('site_id', $this->site_id);
 		$this->db->where('var', 'request_token_secret');
-		if( ! $this->db->delete('exp_twitter_settings')){
+		if( ! $this->db->delete($this->db_settings_table)){
 			$success = false;
 		}
 
-		if(!$this->db->query($this->db->insert_string("exp_twitter_settings",
+		if(!$this->db->query($this->db->insert_string($this->db_settings_table,
      array(
        'var'       => 'request_token',
        'var_value' => $request_token,
@@ -145,7 +147,7 @@ class Twitter_model extends CI_Model {
       $success = false;
     }
 
-		if(!$this->db->query($this->db->insert_string("exp_twitter_settings",
+		if(!$this->db->query($this->db->insert_string($this->db_settings_table,
      array(
        'var'       => 'request_token_secret',
        'var_value' => $request_token_secret,
@@ -174,17 +176,17 @@ class Twitter_model extends CI_Model {
 
 		$this->db->where('site_id', $this->site_id);
 		$this->db->where('var', 'access_token');
-		if( ! $this->db->delete('exp_twitter_settings')){
+		if( ! $this->db->delete($this->db_settings_table)){
 			$success = false;
 		}
 
 		$this->db->where('site_id', $this->site_id);
 		$this->db->where('var', 'access_token_secret');
-		if( ! $this->db->delete('exp_twitter_settings')){
+		if( ! $this->db->delete($this->db_settings_table)){
 			$success = false;
 		}
 
-		if(!$this->db->query($this->db->insert_string("exp_twitter_settings",
+		if(!$this->db->query($this->db->insert_string($this->db_settings_table,
      array(
        'var'       => 'access_token',
        'var_value' => $access_token,
@@ -194,7 +196,7 @@ class Twitter_model extends CI_Model {
       $success = false;
     }
 
-		if(!$this->db->query($this->db->insert_string("exp_twitter_settings",
+		if(!$this->db->query($this->db->insert_string($this->db_settings_table,
      array(
        'var'       => 'access_token_secret',
        'var_value' => $access_token_secret,
@@ -219,7 +221,7 @@ class Twitter_model extends CI_Model {
 
 		// cleanse current settings out of DB : we add the WHERE site_id = $site_id, because the only setting we want to save is the module_id
 		// setting, which is set to site_id 0 -- because its not site specific
-		$sql = "DELETE FROM exp_twitter_settings WHERE site_id = $this->site_id";
+		$sql = "DELETE FROM {$this->db_settings_table} WHERE site_id = $this->site_id";
 		return $this->db->query($sql);
 
 	}
@@ -235,7 +237,7 @@ class Twitter_model extends CI_Model {
 	{
 		$this->db->where('site_id', $this->site_id);
 		$this->db->where('var', $val);
-		return $this->db->delete('exp_twitter_settings');
+		return $this->db->delete($this->db_settings_table);
 	}
 
 }
