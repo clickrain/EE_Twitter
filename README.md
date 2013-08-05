@@ -72,6 +72,7 @@ Set a prefix to use for the user tags (`{name}`, `{screen_name}`, `{location}`, 
 `images_only`
 
 Only return tweets that contain images. Options `yes`, `no`. Defaults to `no`
+When this is set to `yes`, urls to images in the tweet will also be removed from the tweet text.
 
 ####Single Variable Tags
 
@@ -133,7 +134,11 @@ Also, `{retweeter:*}` exists for all user fields for the retweeter, so for examp
 
 `{image}`
 
-The url to the image. This is essentially the same as `{medium}`, though the URL is slightly different.
+The direct url to the image. This is essentially the same as `{medium}`, though the URL is slightly different.
+
+`{display_url}`
+
+Url to the display page of twitpic
 
 `{[size]}`
 
