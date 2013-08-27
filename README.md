@@ -75,13 +75,13 @@ Only return tweets that contain images. Options `yes`, `no`. Defaults to `no`
 
 ####Single Variable Tags
 
-**Dates**: `{relative_date}`, `{iso_date}`, `{created_at}`
+**Dates**: `{twitter_relative_date}`, `{better_relative_date}`, `{iso_date}`, `{created_at}`
 
-`{relative_date}` returns a string that conforms to Twitter Display Requirements. This will a relative date when the tweet occurred less than a day ago (eg "13h" or "29m"), or the date when the tweet occurred more than a day ago (eg "21 Apr 12").
+`{twitter_relative_date}` returns a string that conforms to Twitter Display Requirements. This will a relative date when the tweet occurred less than a day ago (eg "13h" or "29m"), or the date when the tweet occurred more than a day ago (eg "21 Apr 12").
 
-Beware: `{exp:channel:entries}` also has a `{relative_date}`, so if you get a long relative string, it's likely it's being pulled from the channel entries loop. If this is the case, use the `prefix=` parameter to prefix the tags.
+Note: `{twitter_relative_date}` requires PHP 5.3 or above. On PHP 5.2 and before, you will always get a full date string, like '4 Apr 85'.
 
-Note: `{relative_date}` requires PHP 5.3 or above. On PHP 5.2 and before, you will always get a full date string, like '4 Apr 85'.
+`{better_relative_date}` returns a more readable relative date string. Stylistically, it more closely matches relative date conventions found on sites like GitHub and StackOverflow. And probably some other InterCaps out there.
 
 `{iso_date}` returns the date in ISO8601 format. `{created_at}` returns a date that can be formatted with ExpressionEngine's standard `format=` parameter for dates.
 

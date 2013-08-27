@@ -276,7 +276,9 @@ class Twitter
 			$variables[$prefix . 'reply_intent'] = $this->_build_reply_intent($val);
 			$variables[$prefix . 'retweet_intent'] = $this->_build_retweet_intent($val);
 			$variables[$prefix . 'favorite_intent'] = $this->_build_favorite_intent($val);
-			$variables[$prefix . 'relative_date'] = $this->_build_relative_date($val);
+			$variables[$prefix . 'relative_date'] = $this->_build_twitter_relative_date($val);
+			$variables[$prefix . 'twitter_relative_date'] = $this->_build_twitter_relative_date($val);
+			$variables[$prefix . 'better_relative_date'] = $this->_build_better_relative_date($val);
 			$variables[$prefix . 'iso_date'] = $this->_build_iso_date($val);
 			$variables[$prefix . 'created_at'] = strtotime($val['created_at']);
 			$variables[$prefix . 'id'] = $val['id'];
@@ -631,7 +633,7 @@ class Twitter
 		return 'https://twitter.com/intent/favorite?tweet_id=' . $status['id_str'];
 	}
 
-	function _build_relative_date($status, $now = NULL) {
+	function _build_twitter_relative_date($status, $now = NULL) {
 		try {
 			$dt = new DateTime($status['created_at']);
 			if (is_null($now)) {
@@ -674,6 +676,62 @@ class Twitter
 			$dt = new DateTime($status['created_at']);
 			return $dt->format("j M y");
 		}
+	}
+
+	function _build_better_relative_date($status, $now = NULL) {
+		$dt = new DateTime($status['created_at']);
+		if (is_null($now)) {
+			$now = new DateTime();
+		}
+
+		$_second = 1;
+		$_minute = 60 * $_second;
+		$_hour   = 60 * $_minute;
+		$_day    = 24 * $_hour;
+		$_month  = 30 * $_day;
+
+		$delta = abs($dt->format('U') - $now->format('U'));
+
+		if ($delta < 1 * $_minute)
+		{
+			return $delta == 1 ? "one second ago" : $delta . " seconds ago";
+		}
+		if ($delta < 2 * $_minute)
+		{
+			return "a minute ago";
+		}
+		if ($delta < 45 * $_minute)
+		{
+			return floor($delta / $_minute) . " minutes ago";
+		}
+		if ($delta < 90 * $_minute)
+		{
+			return "an hour ago";
+		}
+		if ($delta < 24 * $_hour)
+		{
+			return floor($delta / $_hour) . " hours ago";
+		}
+		if ($delta < 48 * $_hour)
+		{
+			return "yesterday";
+		}
+		if ($delta < 30 * $_day)
+		{
+			return floor($delta / $_day) . " days ago";
+		}
+		if ($delta < 12 * $_month)
+		{
+			$months = floor($delta / $_day / 30);
+			return $months <= 1 ? "one month ago" : $months . " months ago";
+		}
+		else
+		{
+			$years = floor($delta / $_day / 365);
+			return $years <= 1 ? "one year ago" : $years . " years ago";
+		}
+
+		return $status['created_at'];
 	}
 
 	function _build_iso_date($status) {
