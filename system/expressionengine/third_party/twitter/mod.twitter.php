@@ -642,30 +642,53 @@ class Twitter
 				throw new Exception("diff method doesn't exist");
 			}
 			$diff = $dt->diff($now);
-
-			$output = '';
-
-			if ($diff->d < 1) {
-				if ($diff->h > 0) {
-					$output = $diff->h . "h";
-				}
-				else if ($diff->i > 0) {
-					$output = $diff->i . "m";
-				}
-				else {
-					$output = $diff->s . "s";
-				}
+			
+			$_second = 1;
+			$_minute = 60 * $_second;
+			$_hour   = 60 * $_minute;
+			$_day    = 24 * $_hour;
+			$_month  = 30 * $_day;
+			
+			if ($diff->d < 1 * $_minute)
+			{
+				return $diff->d == 1 ? "one second ago" : $diff->d . " seconds ago";
 			}
-			else {
-				if ($dt->format('Y') == $now->format('Y')) {
-					$output = $dt->format("j M");
-				}
-				else {
-					$output = $dt->format("j M y");
-				}
+			if ($diff->d < 2 * $_minute)
+			{
+				return "a minute ago";
+			}
+			if ($diff->d < 45 * $_minute)
+			{
+				return floor($diff->d / $_minute) . " minutes ago";
+			}
+			if ($diff->d < 90 * $_minute)
+			{
+				return "an hour ago";
+			}
+			if ($diff->d < 24 * $_hour)
+			{
+				return floor($diff->d / $_hour) . " hours ago";
+			}
+			if ($diff->d < 48 * $_hour)
+			{
+				return "yesterday";
+			}
+			if ($diff->d < 30 * $_day)
+			{
+				return floor($diff->d / $_day) . " days ago";
+			}
+			if ($diff->d < 12 * $_month)
+			{
+				$months = floor($diff->d / $_day / 30);
+				return $months <= 1 ? "one month ago" : $months . " months ago";
+			}
+			else
+			{
+				$years = floor($diff->d / $_day / 365);
+				return $years <= 1 ? "one year ago" : $years . " years ago";
 			}
 
-			return $output;
+			return $status['created_at'];
 		}
 		catch (Exception $e) {
 			// If diff method doesn't exist, let's just give back the date.
