@@ -220,7 +220,10 @@ class Twitter
 								$find[] = $info['url'];
 								$displayurl = $info['url'];
 								if (isset($info['display_url'])) { $displayurl = $info['display_url']; }
-								$replace[]  = "<a target='".$this->target."' title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
+								if($images_only == FALSE)
+								{
+									$replace[]  = "<a target='".$this->target."' title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
+								}
 								if(isset($info['type']) && $info['type'] == 'photo')
 								{
 									$image = array(
@@ -230,6 +233,7 @@ class Twitter
 										$image = array_merge($image,
 											array(
 												'image' => $info['media_url'],
+												'display_url' => $info['expanded_url'],
 												$size => $info['media_url'] . ':' . $size,
 												$size . '_https' => $info['media_url_https'] . ':' . $size,
 												$size . '_w' => $sizeval['w'],
