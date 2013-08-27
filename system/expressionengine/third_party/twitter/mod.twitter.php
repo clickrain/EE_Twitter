@@ -276,6 +276,7 @@ class Twitter
 			$variables[$prefix . 'reply_intent'] = $this->_build_reply_intent($val);
 			$variables[$prefix . 'retweet_intent'] = $this->_build_retweet_intent($val);
 			$variables[$prefix . 'favorite_intent'] = $this->_build_favorite_intent($val);
+			$variables[$prefix . 'relative_date'] = $this->_build_twitter_relative_date($val);
 			$variables[$prefix . 'twitter_relative_date'] = $this->_build_twitter_relative_date($val);
 			$variables[$prefix . 'better_relative_date'] = $this->_build_better_relative_date($val);
 			$variables[$prefix . 'iso_date'] = $this->_build_iso_date($val);
