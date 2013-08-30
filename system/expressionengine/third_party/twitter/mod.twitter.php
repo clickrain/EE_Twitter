@@ -224,6 +224,14 @@ class Twitter
 								{
 									$replace[]  = "<a target='".$this->target."' title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
 								}
+								else {
+									// If we only want images, drop the <a>
+									// tag that represents the image, because
+									// almost certainly the person using
+									// images_only="yes" will display the
+									// image directly.
+									$replace[]  = '';
+								}
 								if(isset($info['type']) && $info['type'] == 'photo')
 								{
 									$image = array(
