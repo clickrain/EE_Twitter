@@ -1,7 +1,7 @@
 <?php
 class Twitter_upd
 {
-	public $version = '1.5.0';
+	public $version = '1.6.0';
 
 	var $db_settings_table = 'cr_twitter_settings';
 
