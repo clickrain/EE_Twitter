@@ -19,8 +19,12 @@ class Twitter_mcp
 		$this->EE->cp->load_package_css('twitter');
 
 		// Set page title
-		$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('twitter_module_name'));
-
+		// $this->EE->cp->set_variable was deprecated in 2.6
+		if (version_compare(APP_VER, '2.6', '>=')) {
+			$this->EE->view->cp_page_title = $this->EE->lang->line('twitter_module_name');
+		} else {
+			$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('twitter_module_name'));
+		}
 	}
 	/**
 	 * Module CP index function
