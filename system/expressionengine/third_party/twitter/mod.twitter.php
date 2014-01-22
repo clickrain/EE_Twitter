@@ -466,13 +466,15 @@ class Twitter
 		// Check for error response
 		if (isset($json_obj['errors']))
 		{
-			$error = $json_obj['errors'][0]['message'];
+			$error = $json_obj['errors'][0];
 		}
 
 		if (isset($error))
 		{
-			$this->rate_limit_hit = TRUE;
-			$this->EE->TMPL->log_item("Twitter Timeline error: ".$error);
+			if ($error['code'] === 88) {
+				$this->rate_limit_hit = TRUE;
+			}
+			$this->EE->TMPL->log_item("Twitter Timeline error: " . $error['message']);
 			return FALSE;
 		}
 
