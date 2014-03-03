@@ -36,7 +36,7 @@ class Twitter_mcp
 	{
 		$this->EE->load->model('twitter_model');
 
-		$this->data['form_action'] = AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter'.AMP.'method=submit_settings';
+		$this->data['form_action'] = 'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter'.AMP.'method=submit_settings';
 		$this->data['settings'] = $this->EE->twitter_model->get_settings();
 
 		return $this->EE->load->view('index', $this->data, TRUE);
