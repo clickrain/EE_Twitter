@@ -495,41 +495,58 @@ class Twitter
 	 */
 	function _check_cache($hash)
 	{
-		// Check for cache directory
+		if (version_compare(APP_VER, '2.8', '>=')) {
+			$cache = $this->EE->cache->get("/twitter/{$hash}/content");
 
-		$dir = $this->cache_path;
+			if (!$cache) {
+				return FALSE;
+			}
 
-		if ( ! @is_dir($dir))
-		{
-			return FALSE;
+			$timestamp = $this->EE->cache->get("/twitter/{$hash}/timestamp");
+
+			if (time() > ($timestamp + ($this->refresh * 60))) {
+				$this->cache_expired = TRUE;
+			}
+
+			return $cache;
 		}
+		else {
+			// Check for cache directory
 
-		// Check for cache file
+			$dir = $this->cache_path;
 
-        $file = $dir . $hash;
+			if ( ! @is_dir($dir))
+			{
+				return FALSE;
+			}
 
-		if ( ! file_exists($file) OR ! ($fp = @fopen($file, 'rb')))
-		{
-			return FALSE;
+			// Check for cache file
+
+	        $file = $dir . $hash;
+
+			if ( ! file_exists($file) OR ! ($fp = @fopen($file, 'rb')))
+			{
+				return FALSE;
+			}
+
+			flock($fp, LOCK_SH);
+
+			$cache = @fread($fp, filesize($file));
+
+			flock($fp, LOCK_UN);
+
+			fclose($fp);
+
+			// Get when the cache file was last modified
+			$timestamp = filemtime($file);
+
+			if ( time() > ($timestamp + ($this->refresh * 60)) )
+			{
+				$this->cache_expired = TRUE;
+			}
+
+	        return $cache;
 		}
-
-		flock($fp, LOCK_SH);
-
-		$cache = @fread($fp, filesize($file));
-
-		flock($fp, LOCK_UN);
-
-		fclose($fp);
-
-        // Get when the cache file was last modified
-		$timestamp = filemtime($file);
-
-		if ( time() > ($timestamp + ($this->refresh * 60)) )
-		{
-			$this->cache_expired = TRUE;
-		}
-
-        return $cache;
 	}
 
 	// --------------------------------------------------------------------
@@ -545,34 +562,40 @@ class Twitter
 	 */
 	function _write_cache($data, $hash)
 	{
-		// Check for cache directory
+		if (version_compare(APP_VER, '2.8', '>=')) {
+			$this->EE->cache->save("/twitter/{$hash}/content", $data);
+			$this->EE->cache->save("/twitter/{$hash}/timestamp", time());
+		}
+		else {
+			// Check for cache directory
 
-		$dir = $this->cache_path;
+			$dir = $this->cache_path;
 
-		if ( ! @is_dir($dir))
-		{
-			if ( ! @mkdir($dir, 0777))
+			if ( ! @is_dir($dir))
+			{
+				if ( ! @mkdir($dir, 0777))
+				{
+					return FALSE;
+				}
+
+				@chmod($dir, 0777);
+			}
+
+			// Write the cached data
+			$file = $dir . $hash;
+
+			if ( ! $fp = @fopen($file, 'wb'))
 			{
 				return FALSE;
 			}
 
-			@chmod($dir, 0777);
+			flock($fp, LOCK_EX);
+			fwrite($fp, $data);
+			flock($fp, LOCK_UN);
+			fclose($fp);
+
+			@chmod($file, 0777);
 		}
-
-		// Write the cached data
-		$file = $dir . $hash;
-
-		if ( ! $fp = @fopen($file, 'wb'))
-		{
-			return FALSE;
-		}
-
-		flock($fp, LOCK_EX);
-		fwrite($fp, $data);
-		flock($fp, LOCK_UN);
-		fclose($fp);
-
-		@chmod($file, 0777);
 	}
 
 	// --------------------------------------------------------------------
