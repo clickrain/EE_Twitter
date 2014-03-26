@@ -88,14 +88,11 @@ class Twitter
 
 		$this->EE->TMPL->log_item("Using '{$timeline}' Twitter Timeline {$log_extra}");
 
-		// retrieve statuses
-		$url = 'statuses/user_timeline';
-		$params = array('screen_name' => $screen_name, 'include_rts' => $include_rts, 'exclude_replies' => $exclude_replies,  'count' => $count);
-
 		$statuses = array();
 
 		foreach($screen_names as $screen_name)
 		{
+			// retrieve statuses
 			$url = 'statuses/user_timeline';
 			$params = array('screen_name' => $screen_name, 'include_rts' => $include_rts, 'exclude_replies' => $exclude_replies,  'count' => $count);
 
