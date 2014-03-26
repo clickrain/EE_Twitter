@@ -198,23 +198,33 @@ class Twitter
 				$find = array();
 				$replace = array();
 
+				$target = '';
+				if (isset($this->target) && $this->target !== '') {
+					$target = " target='".$this->target."'";
+				}
+
 				foreach ($val['entities'] as $type => $found)
 				{
 					foreach ($found as $info)
 					{
 						switch($type)
 						{
-							case 'user_mentions':	$find[]		= '@'.$info['screen_name'];
-										$replace[]	= "<a target='".$this->target."' title='{$info['name']}' href='http://twitter.com/{$info['screen_name']}'>@{$info['screen_name']}</a>";
+							case 'user_mentions':
+								$find[] = '@'.$info['screen_name'];
+								$replace[] = "<a{$target} title='{$info['name']}' href='http://twitter.com/{$info['screen_name']}'>@{$info['screen_name']}</a>";
 								break;
-							case 'hashtags':		$find[]		= '#'.$info['text'];
-													// Because EE's xss_clean replaces %23 with #, we need to use %2523; EE changes %25 into %, so we get %23.
-													$replace[]	= "<a target='".$this->target."' title='Search for {$info['text']}' href='http://twitter.com/search?q=%2523{$info['text']}'>#{$info['text']}</a>";
+							case 'hashtags':
+								$find[] = '#'.$info['text'];
+								// Because EE's xss_clean replaces %23 with #, we need to use %2523; EE changes %25 into %, so we get %23.
+								$replace[] = "<a{$target} title='Search for {$info['text']}' href='http://twitter.com/search?q=%2523{$info['text']}'>#{$info['text']}</a>";
 								break;
-							case 'urls':			$find[]		= $info['url'];
+							case 'urls':
+								$find[] = $info['url'];
 								$displayurl = $info['url'];
-								if (isset($info['display_url'])) { $displayurl = $info['display_url']; }
-													$replace[]	= "<a target='".$this->target."' title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
+								if (isset($info['display_url'])) {
+									$displayurl = $info['display_url'];
+								}
+								$replace[] = "<a{$target} title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
 								break;
 							case 'media':
 								$find[] = $info['url'];
@@ -222,7 +232,7 @@ class Twitter
 								if (isset($info['display_url'])) { $displayurl = $info['display_url']; }
 								if($images_only == FALSE)
 								{
-									$replace[]  = "<a target='".$this->target."' title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
+									$replace[]  = "<a{$target} title='{$info['expanded_url']}' href='{$info['url']}'>{$displayurl}</a>";
 								}
 								else {
 									// If we only want images, drop the <a>
