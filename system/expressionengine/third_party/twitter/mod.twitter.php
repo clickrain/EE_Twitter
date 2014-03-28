@@ -80,17 +80,26 @@ class Twitter
 			return;
 		}
 
+		$screen_names = explode('|', $screen_name);
+
 		// timeline type
 		$timeline	= 'user';
 		$log_extra	= "For User {$screen_name}";
 
 		$this->EE->TMPL->log_item("Using '{$timeline}' Twitter Timeline {$log_extra}");
 
-		// retrieve statuses
-		$url = 'statuses/user_timeline';
-		$params = array('screen_name' => $screen_name, 'include_rts' => $include_rts, 'exclude_replies' => $exclude_replies,  'count' => $count);
+		$statuses = array();
 
-		$statuses = $this->_fetch_data($url, $params);
+		foreach($screen_names as $screen_name)
+		{
+			// retrieve statuses
+			$url = 'statuses/user_timeline';
+			$params = array('screen_name' => $screen_name, 'include_rts' => $include_rts, 'exclude_replies' => $exclude_replies,  'count' => $count);
+
+			$statuses = array_merge($statuses, $this->_fetch_data($url, $params));
+		}
+
+		usort($statuses, function (array $a, array $b) { return strtotime($b["created_at"]) - strtotime($a["created_at"]); });
 
 		if ( ! $statuses)
 		{
