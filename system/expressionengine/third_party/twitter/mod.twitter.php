@@ -99,7 +99,7 @@ class Twitter
 			$statuses = array_merge($statuses, $this->_fetch_data($url, $params));
 		}
 
-		usort($statuses, function (array $a, array $b) { return strtotime($a["created_at"]) - strtotime($b["created_at"]); });
+		usort($statuses, function (array $a, array $b) { return strtotime($b["created_at"]) - strtotime($a["created_at"]); });
 
 		if ( ! $statuses)
 		{
