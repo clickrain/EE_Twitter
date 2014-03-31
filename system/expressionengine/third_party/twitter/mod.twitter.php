@@ -143,6 +143,46 @@ class Twitter
 		return $this->render_tweets($statuses, $prefix, $userprefix);
 	}
 
+	public function get_list()
+	{
+		// Fetch parameters
+		$this->refresh		= $this->EE->TMPL->fetch_param('twitter_refresh', $this->refresh);
+		$this->limit		= $this->EE->TMPL->fetch_param('limit', $this->limit);
+		$count              = $this->EE->TMPL->fetch_param('count');
+		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
+		$this->target		= $this->EE->TMPL->fetch_param('target', '');
+		$screen_name        = $this->EE->TMPL->fetch_param('screen_name', '');
+		$list               = $this->EE->TMPL->fetch_param('list', '');
+		$prefix             = $this->EE->TMPL->fetch_param('prefix', '');
+		$userprefix         = $this->EE->TMPL->fetch_param('userprefix', NULL);
+		$include_rts		= ($this->EE->TMPL->fetch_param('retweets', 'yes') == 'yes') ? TRUE : FALSE;
+
+		if (!$screen_name)
+		{
+			$this->EE->TMPL->log_item("Parameter screen_name was not provided");
+			return;
+		}
+		if (!$list)
+		{
+			$this->EE->TMPL->log_item("Parameter list was not provided");
+			return;
+		}
+
+		// timeline type
+		$timeline	= 'list';
+		$log_extra	= "For User {$screen_name}, list {$list}";
+
+		$this->EE->TMPL->log_item("Using '{$timeline}' Twitter Timeline {$log_extra}");
+
+		$url = "lists/statuses";
+		$params = array('owner_screen_name' => $screen_name, 'slug' => $list, 'include_rts' => $include_rts);
+
+		// retrieve statuses
+		$statuses = $this->_fetch_data($url, $params);
+
+		return $this->render_tweets($statuses, $prefix, $userprefix);
+	}
+
 	public function script() {
 		return "<script type=\"text/javascript\" src=\"//platform.twitter.com/widgets.js\"></script>";
 	}

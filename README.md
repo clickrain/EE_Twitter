@@ -160,6 +160,33 @@ The height of the image at `[size]`. Example: `{large_h}`.
 
 How Twitter resized the media to the particular `[size]`. Value can be either "crop" or "fit". Example: `{large_resize}`.
 
+### List
+
+    {exp:twitter:get_list screen_name="twitter" list="engineering"}
+
+    {/exp:twitter:get_list}
+
+Why didn't we just name this `list`, you ask? PHP has `list` reserved, so we
+can't create a method on the module with the name `list`. Therefore, we needed
+a different name. After much scientific research, we came up with `get_list`.
+Sorry.
+
+#### Parameters
+
+`screen_name`
+
+The username of the user that owns the list. Required.
+
+`list`
+
+The name of the list. Required.
+
+All other parameters are the same as `{exp:twitter:user}`
+
+#### Single Variable Tags
+
+All variables are the same as `{exp:twitter:user}`
+
 ### Search
 
     {exp:twitter:search query="#twitter" limit="5"}
