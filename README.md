@@ -17,11 +17,12 @@ While we have incentive to keep this project working because we use it frequentl
 ##Installation
 1. Add-ons -> Modules -> Twitter -> Install
 2. Login into http://dev.twitter.com Note: This does not have to be the account you are going to authorize with, or the account you are going to be displaying tweets for.  It is just the account that "owns" the application (your site).
-3. Click "Create a new application" button.
-4. Fillout the <i>Create an Application</i> form.  You do not need to enter a Callback URL.
-5. Copy the Consumer Key and Consumer Secret, under the oAuth settings, and paste them into the Form in the Module CP.  Click "Update".
-6. Click "Generate new Request Token".
-7. Follow on-page instructions to get PIN number, and update form with PIN.
+3. Click on your avatar in the upper right and select "My Applications".
+4. Click "Create New App" button.
+5. Fillout the <i>Create an Application</i> form.  You do not need to enter a Callback URL.
+6. Copy the Consumer Key and Consumer Secret, under the oAuth settings, and paste them into the Form in the Module CP.  Click "Update".
+7. Click "Generate new Request Token".
+8. Follow on-page instructions to get PIN number, and update form with PIN.
 
 ##Template Tags
 
