@@ -1,4 +1,4 @@
-#ExpressionEngine Twitter
+# ExpressionEngine Twitter
 
 ExpressionEngine Twitter is nearly an identical port of EllisLabs Twitter Timeline plugin, via Bryant Hughes's [TGL_Twitter](https://github.com/bryantAXS/TGL_Twitter). However ExpressionEngine Twitter has a CP Backend, allowing a user to authenticate with Twitter using oAuth.
 
@@ -8,23 +8,24 @@ ExpressionEngine Twitter uses the Twitter 1.1 API, and provides tags that make i
 
 While we have incentive to keep this project working because we use it frequently, we are not always available to provide support for the EE Twitter plugin. We therefore offer it to you, free of charge, but with no guarantee of support. Find something that's not working? Or could be improved? By all means, fix it! Submit a pull request, and we'll pull it into the project so everyone can benefit. But please, no hard feelings if we can't help you when it's not working. Go forth and Open Source.
 
-##Requirements
+## Requirements
 
 * EE 2.0
 * Twitter Account
 * PHP 5 >= 5.3
 
-##Installation
+## Installation
+
 1. Add-ons -> Modules -> Twitter -> Install
-2. Login into http://dev.twitter.com Note: This does not have to be the account you are going to authorize with, or the account you are going to be displaying tweets for.  It is just the account that "owns" the application (your site).
-3. Click on your avatar in the upper right and select "My Applications".
-4. Click "Create New App" button.
-5. Fillout the <i>Create an Application</i> form.  You do not need to enter a Callback URL.
-6. Copy the Consumer Key and Consumer Secret, under the oAuth settings, and paste them into the Form in the Module CP.  Click "Update".
+2. Login to http://app.twitter.com Note: This does not have to be the account you are going to authorize with, or the account you are going to be displaying tweets for.  It is just the account that "owns" the application (your site).
+3. Click the "Create New App" button.
+4. Fill out the _Create an Application_ form.  You do not need to enter a Callback URL.
+5. Click on the "API Keys" tab.
+6. Copy the API Key and API Secret, and paste them into the EE_Twitter settings form in your ExpressionEngine control panel.  Click "Update".
 7. Click "Generate new Request Token".
 8. Follow on-page instructions to get PIN number, and update form with PIN.
 
-##Template Tags
+## Template Tags
 
 ### User
 
@@ -32,7 +33,7 @@ While we have incentive to keep this project working because we use it frequentl
 
     {/exp:twitter:user}
 
-####Parameters
+#### Parameters
 
 `screen_name`
 
