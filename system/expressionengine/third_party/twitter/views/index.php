@@ -17,8 +17,8 @@
 	$consumer_key_input_data = array('name' => 'consumer_key','value' => $consumer_key ,'maxlength' => '100' ,'style' => 'width:50%');
 	$consumer_secret_input_data = array('name' => 'consumer_secret','value' => $consumer_secret ,'maxlength' => '100' ,'style' => 'width:50%');
 
-	$this->table->add_row('<strong>Consumer Key</strong>', form_input($consumer_key_input_data));
-	$this->table->add_row('<strong>Consumer Secret</strong>', form_input($consumer_secret_input_data));
+	$this->table->add_row('<strong>API Key</strong>', form_input($consumer_key_input_data));
+	$this->table->add_row('<strong>API Secret</strong>', form_input($consumer_secret_input_data));
 
 
 	//request tokens
