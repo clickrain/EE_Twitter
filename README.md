@@ -17,7 +17,7 @@ While we have incentive to keep this project working because we use it frequentl
 ## Installation
 
 1. Add-ons -> Modules -> Twitter -> Install
-2. Login to http://app.twitter.com Note: This does not have to be the account you are going to authorize with, or the account you are going to be displaying tweets for.  It is just the account that "owns" the application (your site).
+2. Login to https://apps.twitter.com/ Note: This does not have to be the account you are going to authorize with, or the account you are going to be displaying tweets for.  It is just the account that "owns" the application (your site).
 3. Click the "Create New App" button.
 4. Fill out the _Create an Application_ form.  You do not need to enter a Callback URL.
 5. Click on the "API Keys" tab.
