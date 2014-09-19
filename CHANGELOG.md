@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.7.1
+
+* Don't include blank target attributes (target='') in generated links. ([#33][33])
+
+## 1.7.0
+
+* Update to work with ExpressionEngine 2.8.0
+* Use the new caching layer introduced in ExpressionEngine 2.8.0
+
 ## 1.6.1
 
 * [bug]: Fix depricated function warning in EE 2.6 ([#25][25])
@@ -28,3 +37,4 @@
 
 [15]: https://github.com/click-rain/EE_Twitter/issues/15
 [25]: https://github.com/click-rain/EE_Twitter/issues/25
+[33]: https://github.com/click-rain/EE_Twitter/issues/33
