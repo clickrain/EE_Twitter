@@ -17,8 +17,8 @@
 	$consumer_key_input_data = array('name' => 'consumer_key','value' => $consumer_key ,'maxlength' => '100' ,'style' => 'width:50%');
 	$consumer_secret_input_data = array('name' => 'consumer_secret','value' => $consumer_secret ,'maxlength' => '100' ,'style' => 'width:50%');
 
-	$this->table->add_row('<strong>API Key</strong>', form_input($consumer_key_input_data));
-	$this->table->add_row('<strong>API Secret</strong>', form_input($consumer_secret_input_data));
+	$this->table->add_row('<strong>' . lang('twitter_settings_consumer_key') . '</strong>', form_input($consumer_key_input_data));
+	$this->table->add_row('<strong>' . lang('twitter_settings_consumer_secret') . '</strong>', form_input($consumer_secret_input_data));
 
 
 	//request tokens
@@ -33,11 +33,11 @@
 		$pin = isset($settings['pin']) ? $settings['pin'] : '';
 
 		$pin_input_data = array('name' => 'pin','value' => $pin ,'maxlength' => '10' ,'style' => 'width:50%');
-		$this->table->add_row('<strong>Pin</strong>', form_input($pin_input_data));
+		$this->table->add_row('<strong>' . lang('twitter_settings_pin') . '</strong>', form_input($pin_input_data));
 	}
 
 	if(isset($settings['consumer_key'], $settings['consumer_secret']) && !empty($settings['consumer_key']) && !empty($settings['consumer_key']) && ! isset($settings['pin'])){
-		$this->table->add_row("If you are submitting your PIN number, do not click \"Generate New Request Token\" (Click Update, instead)","<p><a id='generate_request_token' href='".BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter'.AMP."method=register_with_twitter'>Generate new Request Token</a></p>");
+		$this->table->add_row(lang('twitter_settings_generate_warning'),"<p><a id='generate_request_token' href='".BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter'.AMP."method=register_with_twitter'>" . lang('twitter_settings_generate') . "</a></p>");
 	}
 
 	//access tokens
@@ -51,8 +51,8 @@
 
 	if(isset($settings['consumer_key'], $settings['consumer_secret'], $settings['request_token'], $settings['request_token_secret'], $settings['pin'], $settings['access_token'], $settings['access_token_secret']))
 	{
-		echo '<h3>You have successfully authenticated.</h3>';
-		$this->table->add_row("","<p><a id='generate_request_token' href='".BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter'.AMP."method=erase_settings'>Erase Authentication Settings</a></p>");
+		echo '<h3>' . lang('twitter_settings_success') .'</h3>';
+		$this->table->add_row("","<p><a id='generate_request_token' href='".BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter'.AMP."method=erase_settings'>" . lang('twitter_settings_erase') . "</a></p>");
 		echo $this->table->generate();
 
 	}else{
