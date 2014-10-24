@@ -678,8 +678,8 @@ class Twitter
 		$settings = $this->EE->twitter_model->get_settings();
 
 		// Read in our saved access token/secret
-		$access_token = $settings['access_token'];
-		$access_token_secret = $settings['access_token_secret'];
+		$access_token = isset($settings['access_token']) ? $settings['access_token'] : FALSE;
+		$access_token_secret = isset($settings['access_token_secret']) ? $settings['access_token_secret'] : FALSE;
 
 		// Create our twitter API object
 		$oauth = new TwitterEETwitter_OAuth($settings['consumer_key'], $settings['consumer_secret'], $access_token, $access_token_secret);
