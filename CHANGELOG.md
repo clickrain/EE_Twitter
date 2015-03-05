@@ -1,5 +1,11 @@
 # Changelog
 
+
+## 1.7.2
+
+* "Links only" support
+* "no_results" tag support (bug fixed: printing {EE} tags when no results)
+
 ## 1.7.1
 
 * Don't include blank target attributes (target='') in generated links. ([#33][33])
