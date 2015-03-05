@@ -22,7 +22,7 @@ class Twitter
 	var $cache_path;
 	var $cache_expired	= FALSE;
 	var $rate_limit_hit = FALSE;
-	var $refresh		= 60;		// Period between cache refreshes, in minutes (purposely high default to prevent hitting twitter's rate limit on shared IPs - be careful)
+	var $refresh		= 45;		// Period between cache refreshes, in minutes (purposely high default to prevent hitting twitter's rate limit on shared IPs - be careful)
 	var $limit			= 20;
 	var $parameters		= array();
 	var $months			= array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
