@@ -73,6 +73,7 @@ class Twitter
 		$include_rts		= ($this->EE->TMPL->fetch_param('retweets', 'yes') == 'yes') ? TRUE : FALSE;
 		$exclude_replies	= ($this->EE->TMPL->fetch_param('replies', 'yes') == 'yes') ? FALSE : TRUE;
 		$images_only     = ($this->EE->TMPL->fetch_param('images_only', "no") == 'yes') ? TRUE : FALSE;
+		$links_only      = ($this->EE->TMPL->fetch_param('links_only', "no") == 'yes') ? TRUE : FALSE;
 
 		if (!$screen_name)
 		{
@@ -101,7 +102,7 @@ class Twitter
 
 		usort($statuses, function (array $a, array $b) { return strtotime($b["created_at"]) - strtotime($a["created_at"]); });
 
-		$return_data = $this->render_tweets($statuses, $prefix, $userprefix, $images_only);
+		$return_data = $this->render_tweets($statuses, $prefix, $userprefix, $images_only, $links_only);
 		return $return_data;
 	}
 
@@ -182,7 +183,7 @@ class Twitter
 		return "<script type=\"text/javascript\" src=\"//platform.twitter.com/widgets.js\"></script>";
 	}
 
-	private function render_tweets($statuses, $prefix, $userprefix, $images_only = FALSE) {
+	private function render_tweets($statuses, $prefix, $userprefix, $images_only = FALSE, $links_only = FALSE) {
 		if ($prefix != '') {
 			$prefix = $prefix . ':';
 		}
@@ -203,6 +204,13 @@ class Twitter
 			//Check if tweet contains an image
 			//If no image is present and user has requested images only, skip this tweet
 			if (! isset($val['entities']['media']) && $images_only == TRUE)
+			{
+				continue;
+			}
+
+			// Check if tweet contains links
+			// If no links are present and the user has requested links only, skip this tweet
+			if (empty($val['entities']['urls']) && $links_only == TRUE)
 			{
 				continue;
 			}
