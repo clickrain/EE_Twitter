@@ -101,11 +101,6 @@ class Twitter
 
 		usort($statuses, function (array $a, array $b) { return strtotime($b["created_at"]) - strtotime($a["created_at"]); });
 
-		if ( ! $statuses)
-		{
-			return;
-		}
-
 		$return_data = $this->render_tweets($statuses, $prefix, $userprefix, $images_only);
 		return $return_data;
 	}
@@ -188,13 +183,6 @@ class Twitter
 	}
 
 	private function render_tweets($statuses, $prefix, $userprefix, $images_only = FALSE) {
-
-
-		if ( ! $statuses)
-		{
-			return;
-		}
-
 		if ($prefix != '') {
 			$prefix = $prefix . ':';
 		}
@@ -382,8 +370,11 @@ class Twitter
 			$loopvars[] = $variables;
 		}
 
-		$output = $this->EE->TMPL->parse_variables($this->EE->TMPL->tagdata, $loopvars);
-		return $output;
+		if (empty($loopvars)) {
+			return $this->EE->TMPL->no_results();
+		}
+
+		return $this->EE->TMPL->parse_variables($this->EE->TMPL->tagdata, $loopvars);
 	}
 
 	/**
