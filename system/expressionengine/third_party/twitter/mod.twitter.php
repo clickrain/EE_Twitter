@@ -22,7 +22,7 @@ class Twitter
 	var $cache_path;
 	var $cache_expired	= FALSE;
 	var $rate_limit_hit = FALSE;
-	var $refresh		= 45;		// Period between cache refreshes, in minutes (purposely high default to prevent hitting twitter's rate limit on shared IPs - be careful)
+	var $refresh		= 60;		// Period between cache refreshes, in minutes (purposely high default to prevent hitting twitter's rate limit on shared IPs - be careful)
 	var $limit			= 20;
 	var $parameters		= array();
 	var $months			= array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
@@ -73,6 +73,7 @@ class Twitter
 		$include_rts		= ($this->EE->TMPL->fetch_param('retweets', 'yes') == 'yes') ? TRUE : FALSE;
 		$exclude_replies	= ($this->EE->TMPL->fetch_param('replies', 'yes') == 'yes') ? FALSE : TRUE;
 		$images_only     = ($this->EE->TMPL->fetch_param('images_only', "no") == 'yes') ? TRUE : FALSE;
+		$links_only     = ($this->EE->TMPL->fetch_param('links_only', "no") == 'yes') ? TRUE : FALSE;
 
 		if (!$screen_name)
 		{
@@ -106,7 +107,7 @@ class Twitter
 			return;
 		}
 
-		$return_data = $this->render_tweets($statuses, $prefix, $userprefix, $images_only);
+		$return_data = $this->render_tweets($statuses, $prefix, $userprefix, $images_only, $links_only);
 		return $return_data;
 	}
 
@@ -139,6 +140,7 @@ class Twitter
 		// retrieve statuses
 		$data = $this->_fetch_data($url, $params);
 		$statuses = $data['statuses'];
+		
 
 		return $this->render_tweets($statuses, $prefix, $userprefix);
 	}
@@ -187,7 +189,7 @@ class Twitter
 		return "<script type=\"text/javascript\" src=\"//platform.twitter.com/widgets.js\"></script>";
 	}
 
-	private function render_tweets($statuses, $prefix, $userprefix, $images_only = FALSE) {
+	private function render_tweets($statuses, $prefix, $userprefix, $images_only = FALSE, $links_only = FALSE) {
 
 
 		if ( ! $statuses)
@@ -218,6 +220,15 @@ class Twitter
 			{
 				continue;
 			}
+
+			//Edit!!!!
+			//Check for links
+			if (empty($val['entities']['urls']) && $links_only == TRUE)
+			{
+				continue;
+			}
+
+
 
 			$variables = array();
 
@@ -382,8 +393,11 @@ class Twitter
 			$loopvars[] = $variables;
 		}
 
-		$output = $this->EE->TMPL->parse_variables($this->EE->TMPL->tagdata, $loopvars);
-		return $output;
+		if(empty($loopvars)) {
+			return $this->EE->TMPL->no_results();
+		} 
+
+		return $this->EE->TMPL->parse_variables($this->EE->TMPL->tagdata, $loopvars);
 	}
 
 	/**

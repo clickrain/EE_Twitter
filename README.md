@@ -76,6 +76,11 @@ Set a prefix to use for the user tags (`{name}`, `{screen_name}`, `{location}`, 
 Only return tweets that contain images. Options `yes`, `no`. Defaults to `no`
 When this is set to `yes`, urls to images in the tweet will also be removed from the tweet text.
 
+`links_only`
+
+Only return tweets that contain links. Options `yes`, `no`. Defaults to `no`
+
+
 ####Single Variable Tags
 
 **Dates**: `{twitter_relative_date}`, `{better_relative_date}`, `{iso_date}`, `{created_at}`
