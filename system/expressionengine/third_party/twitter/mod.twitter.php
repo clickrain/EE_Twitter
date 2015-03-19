@@ -139,6 +139,39 @@ class Twitter
 		return $this->render_tweets($statuses, $prefix, $userprefix);
 	}
 
+	public function getbyid()
+	{
+		// Fetch parameters
+		$this->refresh		= $this->EE->TMPL->fetch_param('twitter_refresh', $this->refresh);
+		$this->limit		= $this->EE->TMPL->fetch_param('limit', '1');
+		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
+		$this->target		= $this->EE->TMPL->fetch_param('target', '');
+		$query = $this->EE->TMPL->fetch_param('id');
+		$prefix = $this->EE->TMPL->fetch_param('prefix', '');
+		$userprefix = $this->EE->TMPL->fetch_param('userprefix', NULL);
+
+		if (!$query)
+		{
+			$this->EE->TMPL->log_item("Parameter query was not provided");
+			return;
+		}
+
+		// timeline type
+		$timeline	= 'getbyid';
+		$log_extra	= "Get by id:{$query}";
+
+		$this->EE->TMPL->log_item("Using '{$timeline}' Twitter Timeline {$log_extra}");
+
+		$url = "statuses/show";
+		$params = array('id' => $query);
+
+		// retrieve statuses
+		$statuses = $this->_fetch_data($url, $params);
+		$statuses = array($statuses);
+
+		return $this->render_tweets($statuses, $prefix, $userprefix);
+	}
+
 	public function get_list()
 	{
 		// Fetch parameters
