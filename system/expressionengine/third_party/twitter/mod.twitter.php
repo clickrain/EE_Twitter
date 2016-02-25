@@ -357,8 +357,14 @@ class Twitter
 			$variables[$userprefix . 'location'] = $val['user']['location'];
 			$variables[$userprefix . 'description'] = $val['user']['description'];
 			$variables[$userprefix . 'profile_image_url'] = $val['user']['profile_image_url'];
+			$variables[$userprefix . 'profile_image_url:mini'] = str_replace ('_normal', '_mini', $val['user']['profile_image_url']);
+			$variables[$userprefix . 'profile_image_url:bigger'] = str_replace ('_normal', '_bigger', $val['user']['profile_image_url']);
+			$variables[$userprefix . 'profile_image_url:original'] = str_replace ('_normal', '', $val['user']['profile_image_url']);
 			$variables[$userprefix . 'profile_image_url_https'] = $val['user']['profile_image_url_https'];
 			$variables[$userprefix . 'image'] = $val['user']['profile_image_url_https'];
+			$variables[$userprefix . 'profile_image_url_https:mini'] = $variables[$userprefix . 'image:mini'] = str_replace ('_normal', '_mini', $val['user']['profile_image_url_https']);
+			$variables[$userprefix . 'profile_image_url_https:bigger'] = $variables[$userprefix . 'image:bigger'] = str_replace ('_normal', '_bigger', $val['user']['profile_image_url_https']);
+			$variables[$userprefix . 'profile_image_url_https:original'] = $variables[$userprefix . 'image:original'] = str_replace ('_normal', '', $val['user']['profile_image_url_https']);
 
 			$variables[$prefix . 'retweeted'] = $retweeted;
 			if ($retweeted) {
@@ -368,8 +374,14 @@ class Twitter
 				$variables[$prefix . 'retweeter:location'] = $retweeter['location'];
 				$variables[$prefix . 'retweeter:description'] = $retweeter['description'];
 				$variables[$prefix . 'retweeter:profile_image_url'] = $retweeter['profile_image_url'];
+				$variables[$prefix . 'retweeter:profile_image_url:mini'] = str_replace ('_normal', '_mini', $retweeter['profile_image_url']);
+				$variables[$prefix . 'retweeter:profile_image_url:bigger'] = str_replace ('_normal', '_bigger', $retweeter['profile_image_url']);
+				$variables[$prefix . 'retweeter:profile_image_url:original'] = str_replace ('_normal', '', $retweeter['profile_image_url']);
 				$variables[$prefix . 'retweeter:profile_image_url_https'] = $retweeter['profile_image_url_https'];
 				$variables[$prefix . 'retweeter:image'] = $retweeter['profile_image_url_https'];
+				$variables[$prefix . 'retweeter:profile_image_url_https:mini'] = $variables[$prefix . 'retweeter:image:mini'] = str_replace ('_normal', '_mini', $retweeter['profile_image_url_https']);
+				$variables[$prefix . 'retweeter:profile_image_url_https:bigger'] = $variables[$prefix . 'retweeter:image:bigger'] = str_replace ('_normal', '_bigger', $retweeter['profile_image_url_https']);
+				$variables[$prefix . 'retweeter:profile_image_url_https:original'] = $variables[$prefix . 'retweeter:image:original'] = str_replace ('_normal', '', $retweeter['profile_image_url_https']);
 			}
 			else {
 				$variables[$prefix . 'retweeter'] = '';
