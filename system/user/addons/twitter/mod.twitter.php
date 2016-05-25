@@ -46,10 +46,8 @@ class Twitter
 	 */
 	function __construct()
 	{
-		$this->EE =& get_instance();
-
-		if ($this->EE->config->item('twitter_cache_path')) {
-			$this->cache_path = $this->EE->config->item('twitter_cache_path');
+		if (ee()->config->item('twitter_cache_path')) {
+			$this->cache_path = ee()->config->item('twitter_cache_path');
 			if (substr_compare($this->cache_path,  '/', -1, 1) !== 0) {
 				$this->cache_path = $this->cache_path . '/';
 			}
@@ -62,22 +60,22 @@ class Twitter
 	public function user()
 	{
 		// Fetch parameters
-		$this->refresh		= $this->EE->TMPL->fetch_param('twitter_refresh', $this->refresh);
-		$this->limit		= $this->EE->TMPL->fetch_param('limit', $this->limit);
-		$count              = $this->EE->TMPL->fetch_param('count');
-		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
-		$this->target		= $this->EE->TMPL->fetch_param('target', '');
-		$screen_name		= $this->EE->TMPL->fetch_param('screen_name');
-		$prefix				= $this->EE->TMPL->fetch_param('prefix', '');
-		$userprefix			= $this->EE->TMPL->fetch_param('userprefix', NULL);
-		$include_rts		= ($this->EE->TMPL->fetch_param('retweets', 'yes') == 'yes') ? TRUE : FALSE;
-		$exclude_replies	= ($this->EE->TMPL->fetch_param('replies', 'yes') == 'yes') ? FALSE : TRUE;
-		$images_only     = ($this->EE->TMPL->fetch_param('images_only', "no") == 'yes') ? TRUE : FALSE;
-		$links_only      = ($this->EE->TMPL->fetch_param('links_only', "no") == 'yes') ? TRUE : FALSE;
+		$this->refresh		= ee()->TMPL->fetch_param('twitter_refresh', $this->refresh);
+		$this->limit		= ee()->TMPL->fetch_param('limit', $this->limit);
+		$count              = ee()->TMPL->fetch_param('count');
+		$this->use_stale	= ee()->TMPL->fetch_param('use_stale_cache', 'yes');
+		$this->target		= ee()->TMPL->fetch_param('target', '');
+		$screen_name		= ee()->TMPL->fetch_param('screen_name');
+		$prefix				= ee()->TMPL->fetch_param('prefix', '');
+		$userprefix			= ee()->TMPL->fetch_param('userprefix', NULL);
+		$include_rts		= (ee()->TMPL->fetch_param('retweets', 'yes') == 'yes') ? TRUE : FALSE;
+		$exclude_replies	= (ee()->TMPL->fetch_param('replies', 'yes') == 'yes') ? FALSE : TRUE;
+		$images_only     = (ee()->TMPL->fetch_param('images_only', "no") == 'yes') ? TRUE : FALSE;
+		$links_only      = (ee()->TMPL->fetch_param('links_only', "no") == 'yes') ? TRUE : FALSE;
 
 		if (!$screen_name)
 		{
-			$this->EE->TMPL->log_item("Parameter screen_name was not provided");
+			ee()->TMPL->log_item("Parameter screen_name was not provided");
 			return;
 		}
 
@@ -87,7 +85,7 @@ class Twitter
 		$timeline	= 'user';
 		$log_extra	= "For User {$screen_name}";
 
-		$this->EE->TMPL->log_item("Using '{$timeline}' Twitter Timeline {$log_extra}");
+		ee()->TMPL->log_item("Using '{$timeline}' Twitter Timeline {$log_extra}");
 
 		$statuses = array();
 
@@ -109,17 +107,17 @@ class Twitter
 	public function search()
 	{
 		// Fetch parameters
-		$this->refresh		= $this->EE->TMPL->fetch_param('twitter_refresh', $this->refresh);
-		$this->limit		= $this->EE->TMPL->fetch_param('limit', $this->limit);
-		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
-		$this->target		= $this->EE->TMPL->fetch_param('target', '');
-		$query = $this->EE->TMPL->fetch_param('query');
-		$prefix = $this->EE->TMPL->fetch_param('prefix', '');
-		$userprefix = $this->EE->TMPL->fetch_param('userprefix', NULL);
+		$this->refresh		= ee()->TMPL->fetch_param('twitter_refresh', $this->refresh);
+		$this->limit		= ee()->TMPL->fetch_param('limit', $this->limit);
+		$this->use_stale	= ee()->TMPL->fetch_param('use_stale_cache', 'yes');
+		$this->target		= ee()->TMPL->fetch_param('target', '');
+		$query = ee()->TMPL->fetch_param('query');
+		$prefix = ee()->TMPL->fetch_param('prefix', '');
+		$userprefix = ee()->TMPL->fetch_param('userprefix', NULL);
 
 		if (!$query)
 		{
-			$this->EE->TMPL->log_item("Parameter query was not provided");
+			ee()->TMPL->log_item("Parameter query was not provided");
 			return;
 		}
 
@@ -127,7 +125,7 @@ class Twitter
 		$timeline	= 'search';
 		$log_extra	= "For search {$query}";
 
-		$this->EE->TMPL->log_item("Using '{$timeline}' Twitter Timeline {$log_extra}");
+		ee()->TMPL->log_item("Using '{$timeline}' Twitter Timeline {$log_extra}");
 
 		$url = "search/tweets";
 		$params = array('q' => $query, 'include_rts' =>'true');
@@ -142,25 +140,25 @@ class Twitter
 	public function get_list()
 	{
 		// Fetch parameters
-		$this->refresh		= $this->EE->TMPL->fetch_param('twitter_refresh', $this->refresh);
-		$this->limit		= $this->EE->TMPL->fetch_param('limit', $this->limit);
-		$count              = $this->EE->TMPL->fetch_param('count');
-		$this->use_stale	= $this->EE->TMPL->fetch_param('use_stale_cache', 'yes');
-		$this->target		= $this->EE->TMPL->fetch_param('target', '');
-		$screen_name        = $this->EE->TMPL->fetch_param('screen_name', '');
-		$list               = $this->EE->TMPL->fetch_param('list', '');
-		$prefix             = $this->EE->TMPL->fetch_param('prefix', '');
-		$userprefix         = $this->EE->TMPL->fetch_param('userprefix', NULL);
-		$include_rts		= ($this->EE->TMPL->fetch_param('retweets', 'yes') == 'yes') ? TRUE : FALSE;
+		$this->refresh		= ee()->TMPL->fetch_param('twitter_refresh', $this->refresh);
+		$this->limit		= ee()->TMPL->fetch_param('limit', $this->limit);
+		$count              = ee()->TMPL->fetch_param('count');
+		$this->use_stale	= ee()->TMPL->fetch_param('use_stale_cache', 'yes');
+		$this->target		= ee()->TMPL->fetch_param('target', '');
+		$screen_name        = ee()->TMPL->fetch_param('screen_name', '');
+		$list               = ee()->TMPL->fetch_param('list', '');
+		$prefix             = ee()->TMPL->fetch_param('prefix', '');
+		$userprefix         = ee()->TMPL->fetch_param('userprefix', NULL);
+		$include_rts		= (ee()->TMPL->fetch_param('retweets', 'yes') == 'yes') ? TRUE : FALSE;
 
 		if (!$screen_name)
 		{
-			$this->EE->TMPL->log_item("Parameter screen_name was not provided");
+			ee()->TMPL->log_item("Parameter screen_name was not provided");
 			return;
 		}
 		if (!$list)
 		{
-			$this->EE->TMPL->log_item("Parameter list was not provided");
+			ee()->TMPL->log_item("Parameter list was not provided");
 			return;
 		}
 
@@ -168,7 +166,7 @@ class Twitter
 		$timeline	= 'list';
 		$log_extra	= "For User {$screen_name}, list {$list}";
 
-		$this->EE->TMPL->log_item("Using '{$timeline}' Twitter Timeline {$log_extra}");
+		ee()->TMPL->log_item("Using '{$timeline}' Twitter Timeline {$log_extra}");
 
 		$url = "lists/statuses";
 		$params = array('owner_screen_name' => $screen_name, 'slug' => $list, 'include_rts' => $include_rts);
@@ -233,7 +231,7 @@ class Twitter
 				$val['retweeter'] = $retweeter;
 			}
 
-			$tagdata = $this->EE->TMPL->tagdata;
+			$tagdata = ee()->TMPL->tagdata;
 
 			$images = array();
 
@@ -326,17 +324,17 @@ class Twitter
 
 			// Clean the tweet
 
-			$val['text'] = $this->EE->security->xss_clean($val['text']);
-			$val['text'] = $this->EE->functions->encode_ee_tags($val['text'], TRUE);
+			$val['text'] = ee()->security->xss_clean($val['text']);
+			$val['text'] = ee()->functions->encode_ee_tags($val['text'], TRUE);
 
 			// Prep conditionals
 
 			$cond	 = $val;
-			$tagdata = $this->EE->functions->prep_conditionals($tagdata, $cond['user']);
+			$tagdata = ee()->functions->prep_conditionals($tagdata, $cond['user']);
 
 			unset($cond['user']);
 			$cond['retweeted'] = $retweeted;
-			$tagdata = $this->EE->functions->prep_conditionals($tagdata, $cond);
+			$tagdata = ee()->functions->prep_conditionals($tagdata, $cond);
 
 
 			$variables[$prefix . 'permalink'] = $this->_build_permalink($val);
@@ -379,10 +377,10 @@ class Twitter
 		}
 
 		if (empty($loopvars)) {
-			return $this->EE->TMPL->no_results();
+			return ee()->TMPL->no_results();
 		}
 
-		return $this->EE->TMPL->parse_variables($this->EE->TMPL->tagdata, $loopvars);
+		return ee()->TMPL->parse_variables(ee()->TMPL->tagdata, $loopvars);
 	}
 
 	/**
@@ -418,7 +416,7 @@ class Twitter
 
 		if ($this->cache_expired OR ! $cached_json)
 		{
-			$this->EE->TMPL->log_item("Fetching Twitter timeline remotely");
+			ee()->TMPL->log_item("Fetching Twitter timeline remotely");
 
 			if ( function_exists('curl_init'))
 			{
@@ -438,7 +436,7 @@ class Twitter
 			// Did we try to grab new data? Tell them that it failed.
 			if ( ! $cached_json OR $this->cache_expired)
 			{
-				$this->EE->TMPL->log_item("Twitter Timeline Error: Unable to retrieve statuses from Twitter.com");
+				ee()->TMPL->log_item("Twitter Timeline Error: Unable to retrieve statuses from Twitter.com");
 
 				// Rate limit hit and no cached data?
 				// We definitely need to write a cache file so we don't continue
@@ -455,11 +453,11 @@ class Twitter
 					return FALSE;
 				}
 
-				$this->EE->TMPL->log_item("Twitter Timeline Using Stale Cache: ".$uniqueid);
+				ee()->TMPL->log_item("Twitter Timeline Using Stale Cache: ".$uniqueid);
 			}
 			else
 			{
-				$this->EE->TMPL->log_item("Twitter Timeline Retrieved From Cache.");
+				ee()->TMPL->log_item("Twitter Timeline Retrieved From Cache.");
 			}
 
 
@@ -478,7 +476,7 @@ class Twitter
 
 			if ( ! $json_obj)
 			{
-				$this->EE->TMPL->log_item("Twitter Timeline Error: Invalid Cache File");
+				ee()->TMPL->log_item("Twitter Timeline Error: Invalid Cache File");
 				return FALSE;
 			}
 		}
@@ -532,7 +530,7 @@ class Twitter
 			if ($error['code'] === 88) {
 				$this->rate_limit_hit = TRUE;
 			}
-			$this->EE->TMPL->log_item("Twitter Timeline error: " . $error['message']);
+			ee()->TMPL->log_item("Twitter Timeline error: " . $error['message']);
 			return FALSE;
 		}
 
@@ -554,13 +552,13 @@ class Twitter
 	function _check_cache($hash)
 	{
 		if (version_compare(APP_VER, '2.8', '>=')) {
-			$cache = $this->EE->cache->get("/twitter/{$hash}/content");
+			$cache = ee()->cache->get("/twitter/{$hash}/content");
 
 			if (!$cache) {
 				return FALSE;
 			}
 
-			$timestamp = $this->EE->cache->get("/twitter/{$hash}/timestamp");
+			$timestamp = ee()->cache->get("/twitter/{$hash}/timestamp");
 
 			if (time() > ($timestamp + ($this->refresh * 60))) {
 				$this->cache_expired = TRUE;
@@ -621,8 +619,8 @@ class Twitter
 	function _write_cache($data, $hash)
 	{
 		if (version_compare(APP_VER, '2.8', '>=')) {
-			$this->EE->cache->save("/twitter/{$hash}/content", $data);
-			$this->EE->cache->save("/twitter/{$hash}/timestamp", time());
+			ee()->cache->save("/twitter/{$hash}/content", $data);
+			ee()->cache->save("/twitter/{$hash}/timestamp", time());
 		}
 		else {
 			// Check for cache directory
@@ -673,8 +671,8 @@ class Twitter
 
 		//this is where we have modified the plugin to fetch our data via oauth
 
-		$this->EE->load->model('twitter_model');
-		$settings = $this->EE->twitter_model->get_settings();
+		ee()->load->model('twitter_model');
+		$settings = ee()->twitter_model->get_settings();
 
 		// Read in our saved access token/secret
 		$access_token = isset($settings['access_token']) ? $settings['access_token'] : FALSE;

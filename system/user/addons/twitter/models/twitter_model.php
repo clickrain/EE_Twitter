@@ -20,15 +20,14 @@ class Twitter_model extends CI_Model {
 	{
 		parent::__construct();
 
-		$this->_ee =& get_instance();
-		$this->site_id = $this->_ee->config->item('site_id');
+		$this->site_id = ee()->config->item('site_id');
 
 		//prep-cache
-		if (! isset($this->_ee->session->cache['twitter']))
+		if (! isset(ee()->session->cache['twitter']))
 		{
-			$this->_ee->session->cache['twitter'] = array();
+			ee()->session->cache['twitter'] = array();
 		}
-		$this->cache =& $this->_ee->session->cache['twitter'];
+		$this->cache =& ee()->session->cache['twitter'];
 
   }
 
