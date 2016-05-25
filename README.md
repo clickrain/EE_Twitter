@@ -1,6 +1,6 @@
 # ExpressionEngine Twitter
 
-ExpressionEngine Twitter is nearly an identical port of EllisLabs Twitter Timeline plugin, via Bryant Hughes's [TGL_Twitter](https://github.com/bryantAXS/TGL_Twitter). However ExpressionEngine Twitter has a CP Backend, allowing a user to authenticate with Twitter using oAuth.
+This module is a EE 3 version of the ClickRain EE Twitter module which is nearly an identical port of EllisLabs Twitter Timeline plugin, via Bryant Hughes's [TGL_Twitter](https://github.com/bryantAXS/TGL_Twitter). However ExpressionEngine Twitter has a CP Backend, allowing a user to authenticate with Twitter using oAuth.
 
 ExpressionEngine Twitter uses the Twitter 1.1 API, and provides tags that make it possible to conform to Twitter's [Display Requirements](https://dev.twitter.com/terms/display-requirements).
 
@@ -10,7 +10,7 @@ While we have incentive to keep this project working because we use it frequentl
 
 ## Requirements
 
-* EE 2.0
+* EE 3.0
 * Twitter Account
 * PHP 5 >= 5.3
 
