@@ -5,27 +5,12 @@ require_once PATH_THIRD.'twitter/classes/twitteroauth.php';
 class Twitter_mcp
 {
 	private $data = array();
-
+ 
 	public function __construct()
 	{
-		$this->EE =& get_instance();
-		$this->site_id = $this->EE->config->item('site_id');
-		$this->base_url = BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter';
-
-		// load table lib for control panel
-		$this->EE->load->library('table');
-		$this->EE->load->helper('form');
-
-		$this->EE->cp->load_package_css('twitter');
-
-		// Set page title
-		// $this->EE->cp->set_variable was deprecated in 2.6
-		if (version_compare(APP_VER, '2.6', '>=')) {
-			$this->EE->view->cp_page_title = $this->EE->lang->line('twitter_module_name');
-		} else {
-			$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('twitter_module_name'));
-		}
+		ee()->load->model('twitter_model');
 	}
+
 	/**
 	 * Module CP index function
 	 *
@@ -34,12 +19,164 @@ class Twitter_mcp
 	 */
 	public function index()
 	{
-		$this->EE->load->model('twitter_model');
+		// check if we have a result
+		$rules = array(
+		 	'consumer_key'         => 'required|minLength[3]',
+		 	'consumer_secret'      => 'required|minLength[3]',
+		);
+		$result = ee('Validation')->make($rules)->validate($_POST);
 
-		$this->data['form_action'] = 'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter'.AMP.'method=submit_settings';
-		$this->data['settings'] = $this->EE->twitter_model->get_settings();
+		if($result->isValid())
+		{
+			// do save
+			$save = $this->submit_settings();
 
-		return $this->EE->load->view('index', $this->data, TRUE);
+			// handle errors
+			if($save == 'pin_success')
+			{
+				$message = lang('Success! You are now Authenticated.');
+				ee('CP/Alert')->makeBanner('success-message')->asSuccess()->withTitle(lang('Form saved'))->addToBody($message)->defer();
+			}
+			else if($save == 'pin_error')
+			{
+				$message = lang('Error authenticating with Twitter. Please verify Pin and re-submit');
+				ee('CP/Alert')->makeBanner('error-message')->asError()->withTitle(lang('Error'))->addToBody($message)->defer();
+			}
+			else if($save == TRUE)
+			{
+				$message = lang('Success!');
+				ee('CP/Alert')->makeBanner('success-message')->asSuccess()->withTitle(lang('Form saved'))->addToBody($message)->defer();
+			}
+			else
+			{
+				$message = lang('Error saving settings.');
+				ee('CP/Alert')->makeBanner('error-message')->asError()->withTitle(lang('Error'))->addToBody($message)->defer();
+			}
+
+			ee()->functions->redirect(ee('CP/URL', 'addons/settings/twitter/')->compile());
+			exit;
+		}
+		else
+		{
+			// get the settings
+			$settings = ee()->twitter_model->get_settings();
+
+			$consumer_key         = (isset($settings['consumer_key'])) ? $settings['consumer_key'] : '';
+			$consumer_secret      = (isset($settings['consumer_secret'])) ? $settings['consumer_secret'] : '';
+			$pin 		          = (isset($settings['pin'])) ? $settings['pin'] : '';
+			$request_token   	  = (isset($settings['request_token'])) ? $settings['request_token'] : FALSE;
+			$request_token_secret = (isset($settings['request_token_secret'])) ? $settings['request_token_secret'] : FALSE;
+			$access_token   	  = (isset($settings['access_token'])) ? $settings['access_token'] : FALSE;
+			$access_token_secret  = (isset($settings['access_token_secret'])) ? $settings['access_token_secret'] : FALSE;
+
+
+			// consumer key
+			$fields[] = array
+			(
+				'title' => 'twitter_settings_consumer_key',
+				'fields' => array(
+					'consumer_key' => array(
+						'type'     => 'text',
+						'value'    => $consumer_key,
+						'required' => TRUE
+					)
+				),
+			);
+
+			// consumer secret
+			$fields[] = array
+			(
+				'title' => 'twitter_settings_consumer_secret',
+				'fields' => array(
+					'consumer_secret' => array(
+						'type'     => 'text',
+						'value'    => $consumer_secret,
+						'required' => TRUE
+					)
+				),
+			);
+
+			// add the pin fields
+			if($request_token != FALSE && $request_token_secret != FALSE && ! empty($consumer_key) && ! empty($consumer_secret))
+			{
+
+				$fields[] = array
+				(
+					'title'  => 'twitter_settings_pin',
+					'fields' => array(
+						'request_token' => array(
+							'type'     => 'hidden',
+							'value'    => $request_token,
+						),
+						'request_token_secret' => array(
+							'type'     => 'hidden',
+							'value'    => $request_token_secret,
+						),
+						'pin' => array(
+							'type'     => 'text',
+							'value'    => $pin,
+						),
+					),
+				);
+			}
+
+			// add the button
+			if(isset($settings['consumer_key'], $settings['consumer_secret']) && !empty($settings['consumer_key']) && !empty($settings['consumer_key']) && ! isset($settings['pin']))
+			{
+				$fields[] = array
+				(
+					'title'  => 'twitter_settings_generate',
+					'fields' => array(
+						'generate_settings' => array(
+							'type'          => 'html',
+							'content'       => '<a class="btn tn action" href="'.ee('CP/URL')->make('addons/settings/twitter/register_with_twitter').'">'.lang('twitter_settings_generate').'</a>',
+						)
+					)
+				);
+			}
+
+			// add the access token fields
+			if($access_token != FALSE && $access_token_secret != FALSE)
+			{
+				$fields[] = array
+				(
+					'fields' => array(
+						'access_token' => array(
+							'type'     => 'hidden',
+							'value'    => $access_token,
+						),
+						'access_token_secret' => array(
+							'type'     => 'hidden',
+							'value'    => $access_token_secret,
+						),
+					),
+				);
+			}
+
+			$form = array($fields);
+
+			// final view variables we need to render the form
+			$vars = array('sections' => $form);
+			$vars += array
+			(
+				'base_url' 			    => ee('CP/URL', 'addons/settings/twitter'),
+				'cp_page_title' 		=> lang('twitter_module_name'),
+				'save_btn_text' 		=> 'btn_save_form',
+				'save_btn_text_working' => 'btn_saving',
+				'settings' 				=> $settings,
+			);	
+
+			// add the error to the form
+			if($_POST)
+				$vars['errors'] = $result;
+
+			return array
+			(
+			  	'body'       => ee('View')->make('twitter:settings')->render($vars),
+			  	'breadcrumb' => array(ee('CP/URL', 'addons/settings/twitter/')->compile() => lang('twitter_module_name')),
+				'heading'    => lang('settings')
+			);
+		}
 	}
 
 	/**
@@ -48,47 +185,36 @@ class Twitter_mcp
 	 * @return void
 	 * @author Bryant Hughes
 	 */
-	public function submit_settings()
+	private function submit_settings()
 	{
-
-		$this->EE->load->model('twitter_model');
-
 		//loops through the post and adds all settings (deletes old settings first)
-		$success = $this->EE->twitter_model->insert_new_settings();
-
-		$settings = $this->EE->twitter_model->get_settings();
+		$success  = ee()->twitter_model->insert_new_settings();
+		$settings = ee()->twitter_model->get_settings();
 
 		if($success && isset($settings['pin']) && ! isset($settings['access_token'], $settings['access_token_secret'])){
 
 			//if a pin has been submitted, we want to generate the access tokens for the app
-			if($this->generate_access_tokens($settings)){
-				$this->EE->session->set_flashdata('message_success', $this->EE->lang->line('Success! You are now Authenticated.'));
-			}else{
-
-				//if the pin was not able to be created, delete the submitted pin and send the user back to the authenticate page.
-				/*
-					TODO : we could use some better UX here.  Ideally sending the user back to this page happens after they create a request token,
-								 and sending them back because of an invaid acess token authentication is somewhat confusing
-				*/
-				$this->EE->twitter_model->delete_setting('pin');
-				$this->EE->session->set_flashdata('message_failure', $this->EE->lang->line('Error authenticating with Twitter. Please verify Pin and re-submit'));
-				$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter'.AMP.'method=register_with_twitter');
+			if($this->generate_access_tokens($settings))
+			{
+				return 'pin_success';
 			}
+			else
+			{
+				//if the pin was not able to be created, delete the submitted pin and send the user back to the authenticate page.
+				ee()->twitter_model->delete_setting('pin');
 
-		}else{
-
-			//else : sumission before pin as been submitted, or after all settings have been submitted
-
-			if(! $success){
-			  $this->EE->session->set_flashdata('message_failure', $this->EE->lang->line('Error saving settings.'));
-			}else{
-			  $this->EE->session->set_flashdata('message_success', $this->EE->lang->line('Success!'));
+				return 'pin_error';
 			}
 
 		}
+		else
+		{
+			//else : sumission before pin as been submitted, or after all settings have been submitted
+			if(!$success)
+				return FALSE;
 
-		$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter');
-
+			return TRUE;
+		}
 	}
 
 	/**
@@ -99,43 +225,55 @@ class Twitter_mcp
 	 */
 	public function register_with_twitter()
 	{
-
-		$this->EE->load->model('twitter_model');
-		$settings = $this->EE->twitter_model->get_settings();
+		$settings = ee()->twitter_model->get_settings();
 
 		$oauth = new TwitterEETwitter_OAuth($settings['consumer_key'], $settings['consumer_secret']);
 		$request = $oauth->getRequestToken();
 
-		if($request != FALSE){
-
+		if($request != FALSE)
+		{
 			$requestToken = $request['oauth_token'];
 			$requestTokenSecret = $request['oauth_token_secret'];
 
 			//save auth tokens into the db
-			$success = $this->EE->twitter_model->insert_secret_token($requestToken,$requestTokenSecret);
+			$success = ee()->twitter_model->insert_secret_token($requestToken, $requestTokenSecret);
 
-			if($success){
+			if($success)
+			{
+				$message = lang('Success! You are now Authenticated.');
+				ee('CP/Alert')->makeBanner('success-message')->asSuccess()->withTitle(lang('Succesfully authenticated'))->addToBody($message)->now();
 
-				// get Twitter generated registration URL and load the authenticate view
-				$this->data['register_url'] = $oauth->getAuthorizeURL($request);
-				$this->EE->session->set_flashdata('message_success', $this->EE->lang->line('Success!'));
-				return $this->EE->load->view('authenticate', $this->data, TRUE);
+				// final view variables we need to render the form
+				$vars = array
+				(
+					'base_url' 		=> ee('CP/URL', 'addons/settings/twitter'),
+					'cp_page_title' => lang('twitter_module_name'),
+					'register_url'  => $oauth->getAuthorizeURL($request)
+				);	
+				return array
+				(
+				  	'body'       => ee('View')->make('twitter:authenticate')->render($vars),
+				  	'breadcrumb' => array(ee('CP/URL', 'addons/settings/twitter/')->compile() => lang('twitter_module_name')),
+					'heading'    => lang('settings')
+				);
 			}
 			else
 			{
-				$this->EE->session->set_flashdata('message_failure', $this->EE->lang->line('There was an error saving request tokens.'));
-				$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter');
+				$message = lang('There was an error saving request tokens.');
+				ee('CP/Alert')->makeBanner('error-message')->asError()->withTitle(lang('Error'))->addToBody($message)->defer();
+
+				ee()->functions->redirect(ee('CP/URL', 'addons/settings/twitter/')->compile());
+				exit;
 			}
 
-		}else{
+		}
+		else
+		{
+			$message = lang('There was an error generating request tokens. Please verify and re-submit your Consumer Key and Secret.');
+			ee('CP/Alert')->makeBanner('error-message')->asError()->withTitle(lang('Error'))->addToBody($message)->defer();
 
-			//else : we were not able to create request tokens, probably becase the consumer key/secret were correct.  lets erase those keys
-			//			 from the settings and send the user back to square one of the process.
-
-			$this->EE->twitter_model->delete_all_settings();
-			$this->EE->session->set_flashdata('message_failure', $this->EE->lang->line('There was an error generating request tokens. Please verify and re-submit your Consumer Key and Secret.'));
-			$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter');
-
+			ee()->functions->redirect(ee('CP/URL', 'addons/settings/twitter/')->compile());
+			exit;
 		}
 
 	}
@@ -149,7 +287,7 @@ class Twitter_mcp
 	 */
 	private function generate_access_tokens($settings)
 	{
-		$this->EE->load->model('twitter_model');
+		ee()->load->model('twitter_model');
 
 		//Retrieve our previously generated request token & secret
 		$requestToken = $settings['request_token'];
@@ -166,7 +304,7 @@ class Twitter_mcp
 			$access_token_secret = $request['oauth_token_secret'];
 
 			// Save our access token/secret
-			return $this->EE->twitter_model->insert_access_token($access_token, $access_token_secret);
+			return ee()->twitter_model->insert_access_token($access_token, $access_token_secret);
 		}
 		else
 		{
@@ -183,10 +321,13 @@ class Twitter_mcp
 	 */
 	public function erase_settings()
 	{
-		$this->EE->load->model('twitter_model');
-		$this->EE->twitter_model->delete_all_settings();
-		$this->EE->session->set_flashdata('message_success', $this->EE->lang->line('Authentication Settings Erased.'));
-		$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter');
+		ee()->twitter_model->delete_all_settings();
+
+		$message = lang('Authentication Settings Erased.');
+		ee('CP/Alert')->makeBanner('success-message')->asSuccess()->withTitle(lang('Succesfully authenticated'))->addToBody($message)->defer();
+
+		ee()->functions->redirect(ee('CP/URL', 'addons/settings/twitter/')->compile());
+		exit;
 	}
 
 }

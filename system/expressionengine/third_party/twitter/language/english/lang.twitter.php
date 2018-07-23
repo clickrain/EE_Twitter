@@ -12,5 +12,9 @@ $lang = array(
 'twitter_settings_generate' => 'Generate new Request Token',
 'twitter_settings_erase' => 'Erase Authentication Settings',
 
+'settings'      => 'Settings',
+'btn_save_form' => 'Save settings',
+'btn_saving'    => 'Saving',
+
 '' => ''
 );

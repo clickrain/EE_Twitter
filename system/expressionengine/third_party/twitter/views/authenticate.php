@@ -1,20 +1,28 @@
+<div class="box">
 
-<?php
+	<div class="tbl-ctrls">
+	
+		<? if(isset($register_url)): ?>
 
-	if(isset($register_url)){
+		<p>
+			<strong>Your request token has been saved.</strong>
+		</p>
+		<p>
+			Please read the entire directions before proceeding
+		</p>
+		<p>
+			First, click <a target="_blank" href="<?=$register_url?>">here</a> to be taken to Twitter, where you can authenticate this site.  Copy the Pin number Twitter provides.  
+			Then, come back to this page and click <a href="<?=ee('CP/URL', 'addons/settings/twitter/')->compile()?>">here</a> to be taken back to the settings form, where you will submit your Pin.
+		</p>
 
+		<? else: ?>
 
-		echo "<div id='authenticate_copy_container'>
-			<p><strong>Your request token has been saved.</strong></p>
-			<p>Please read the entire directions before proceeding</p>";
+		<p>
+			<strong>There was an error generating your request tokens</strong>
+		</p>
 
-		echo "<p>First, click <a target='_blank' href='".$register_url."'>here</a> to be taken to Twitter, where you can authenticate this site.  Copy the Pin number Twitter provides.  Then, come back to this page and click <a href='".BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=twitter'."'>here</a> to be taken back to the settings form, where you will submit your Pin.</p>";
+		<? endif; ?>
 
-	}else{
-
-		echo "<div id='authenticate_copy_container'>
-			<p><strong>There was an error generating your request tokens</strong></p>";
-	}
-
-?>
+	</div>
+</div>
 
