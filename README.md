@@ -129,6 +129,16 @@ The profile image of the person who created the tweet, using the HTTP protocol.
 
 The profile image of the person who created the tweet, using the HTTPS protocol.
 
+`{profile_image_url:mini}`, `{profile_image_url:bigger}`, `{profile_image_url:original}`
+
+The standard profile image is 48px by 48px. You can also use other size variations:
+
+* mini: 24px by 24px
+* bigger: 73px by 73px
+* original: [the dimensions of the originally uploaded image]
+
+Those same tag extensions will also work on the secure and retweeted image variants, e.g. `{image:bigger}`, `{retweeter:profile_image_url_https:mini}`
+
 **Retweets**: `{if retweeted}`, `{retweeter}`
 
 If the tweet is a retweet, the _original_ tweet will be shown. Use `{if retweet}` to determine if the tweet being shown is a retweet. `{retweeter}` will then include the name of the person that retweeted the tweet.
