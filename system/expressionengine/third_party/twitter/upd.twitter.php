@@ -1,7 +1,7 @@
 <?php
 class Twitter_upd
 {
-	public $version = '1.8.0';
+	public $version = '1.9.0';
 	public $db_settings_table = 'cr_twitter_settings';
 
 	public function __construct()
